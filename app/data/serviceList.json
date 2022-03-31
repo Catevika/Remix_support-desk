@@ -1,0 +1,40 @@
+{
+  "services": [
+    {
+      "id": 1,
+      "name": "Information Technology"
+    },
+    {
+      "id": 2,
+      "name": "Reception"
+    },
+    {
+      "id": 3,
+      "name": "Accounting"
+    },
+    {
+      "id": 4,
+      "name": "Human Resources"
+    },
+    {
+      "id": 5,
+      "name": "Marketing"
+    },
+    {
+      "id": 6,
+      "name": "Sales"
+    },
+    {
+      "id": 7,
+      "name": "Finance"
+    },
+    {
+      "id": 8,
+      "name": "Production"
+    },
+    {
+      "id": 9,
+      "name": "Maintenance"
+    }
+  ]
+}

@@ -3,15 +3,16 @@ import {
 	useActionData,
 	json,
 	useSearchParams,
-	Form,
 	useTransition,
-	Link
+	Link,
+	useFetcher
 } from 'remix';
 
 import { db } from '~/utils/db.server';
 import { createUserSession, register } from '~/utils/session.server';
 import { FaTools } from 'react-icons/fa';
 import styles from '~/styles/form.css';
+import serviceList from '~/data/serviceList.json';
 
 export const links: LinksFunction = () => {
 	return [{ rel: 'stylesheet', href: styles }];
@@ -125,6 +126,15 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Register() {
+	const fetcher = useFetcher();
+
+	function handleSelect(selectedValue: string) {
+		fetcher.submit(
+			{ selected: selectedValue },
+			{ method: 'post', action: '/register' }
+		);
+	}
+
 	const actionData = useActionData<ActionData>();
 	const [searchParams] = useSearchParams();
 	const transition = useTransition();
@@ -132,13 +142,13 @@ export default function Register() {
 		<>
 			<header className='container header'>
 				<Link to='/'>
-					<FaTools className='icon' />
+					<FaTools className='icon-size icon-shadow icon-linked icon-header' />
 				</Link>
 				<h1>Welcome to your Support-Desk!</h1>
 			</header>
 			<div className='form-container'>
 				<div className='form-content'>
-					<Form method='post' className='form'>
+					<fetcher.Form method='post' className='form'>
 						<input
 							type='hidden'
 							name='redirectTo'
@@ -159,6 +169,7 @@ export default function Register() {
 										? 'username-error'
 										: undefined
 								}
+								autoFocus
 							/>
 							{actionData?.fieldErrors?.username ? (
 								<p
@@ -226,18 +237,35 @@ export default function Register() {
 							) : null}
 						</div>
 						<div className='form-group'>
-							<label htmlFor='service-input'>Service</label>
-							<input
-								type='text'
-								id='service-input'
-								name='service'
-								autoComplete='service'
-								defaultValue={actionData?.fields?.service}
-								aria-invalid={Boolean(actionData?.fieldErrors?.service)}
-								aria-errormessage={
-									actionData?.fieldErrors?.service ? 'service-error' : undefined
-								}
-							/>
+							<label htmlFor='service'>Service </label>
+							{serviceList.services.length ? (
+								<select
+									name='service'
+									id='service'
+									defaultValue='-- Please select your service --'
+									onSelect={(e) => handleSelect}
+									className='form-select'
+								>
+									<option
+										defaultValue='-- Please select your service --'
+										disabled
+										className='form-option-disabled'
+									>
+										-- Please select your service --
+									</option>
+									{serviceList.services.map((service) => (
+										<option
+											key={service.id}
+											value={service.name}
+											className='form-option'
+										>
+											{service.name}
+										</option>
+									))}
+								</select>
+							) : (
+								'No service available'
+							)}
 							{actionData?.fieldErrors?.service ? (
 								<p
 									className='form-validation-error'
@@ -249,7 +277,7 @@ export default function Register() {
 							) : null}
 						</div>
 						{transition.submission ? (
-							<button type='submit' className='btn form-btn'>
+							<button type='submit' className='btn form-btn' disabled>
 								Registering...
 							</button>
 						) : (
@@ -257,7 +285,7 @@ export default function Register() {
 								Register
 							</button>
 						)}
-					</Form>
+					</fetcher.Form>
 				</div>
 			</div>
 		</>

@@ -101,7 +101,7 @@ export default function Login() {
 		<>
 			<header className='container header'>
 				<Link to='/'>
-					<FaTools className='icon' />
+					<FaTools className='icon-size icon-shadow icon-linked icon-header' />
 				</Link>
 				<h1>Welcome to your Support-Desk!</h1>
 			</header>
@@ -126,6 +126,7 @@ export default function Login() {
 								aria-errormessage={
 									actionData?.fieldErrors?.email ? 'email-error' : undefined
 								}
+								autoFocus
 							/>
 							{actionData?.fieldErrors?.email ? (
 								<p
