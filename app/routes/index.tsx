@@ -1,14 +1,11 @@
-import type { LoaderFunction, LinksFunction } from 'remix';
+import type { LoaderFunction } from 'remix';
 import { Form, Link, json, useLoaderData } from 'remix';
 import { getUser } from '~/utils/session.server';
 import { RiDashboardLine } from 'react-icons/ri';
 import { FaTools } from 'react-icons/fa';
-import styles from '~/styles/index.css';
 import url from '~/assets/wave.svg';
 
-export const links: LinksFunction = () => {
-	return [{ rel: 'stylesheet', href: styles }];
-};
+// TODO: Insert Meta to describe what's going on in this file through the page tab
 
 type LoaderData = {
 	user: Awaited<ReturnType<typeof getUser>>;
@@ -41,12 +38,8 @@ export default function Welcome() {
 						</Form>
 					</header>
 					<main>
-						<p className='header-text'>
-							Hi{' '}
-							<span>{`${
-								data.user.username.charAt(0).toUpperCase() +
-								data.user.username.slice(1)
-							}`}</span>
+						<p className='main-text'>
+							Hi <span className='capitalize'>{data.user.username}</span>
 						</p>
 					</main>
 					<nav className='nav container'>
@@ -78,21 +71,23 @@ export default function Welcome() {
 					</header>
 					<main className='main'>
 						<img src={url} alt='' className='background-image' />
-						<Form action='/login' method='post' className='form container'>
-							<p>
-								Already have an account:&nbsp;
-								<button type='submit' className='btn'>
-									Login
-								</button>
-							</p>
-						</Form>
-						<FaTools className='icon-large' />
 						<Form action='/register' method='post' className='form container'>
 							<p>
-								Else, create a new account:&nbsp;
 								<button type='submit' className='btn'>
 									Register
 								</button>
+								&nbsp; for free to get your access
+							</p>
+						</Form>
+						<div className='icon-large-container'>
+							<FaTools className='icon-large' />
+						</div>
+						<Form action='/login' method='post' className='form container'>
+							<p>
+								<button type='submit' className='btn'>
+									Login
+								</button>
+								&nbsp; with email and password
 							</p>
 						</Form>
 					</main>
