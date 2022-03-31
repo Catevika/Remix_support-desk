@@ -4,6 +4,8 @@ import { getUser } from '~/utils/session.server';
 import { FaTools, FaQuestionCircle, FaTicketAlt } from 'react-icons/fa';
 import { CgProfile } from 'react-icons/cg';
 
+// TODO: Insert Meta to describe what's going on in this file through the page tab
+
 type LoaderData = {
 	user: Awaited<ReturnType<typeof getUser>>;
 };
@@ -33,14 +35,9 @@ export default function Employee() {
 				</Form>
 			</header>
 			<main>
-				<p className='header-text'>
-					<span>
-						{data?.user?.username
-							? `${
-									data.user.username.charAt(0).toUpperCase() +
-									data.user.username.slice(1)
-							  }`
-							: null}
+				<p className='main-text'>
+					<span className='capitalize'>
+						{data?.user?.username ? data.user.username : null}
 					</span>
 					, what do you need help with?
 				</p>
