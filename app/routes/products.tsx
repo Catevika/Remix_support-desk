@@ -1,59 +1,40 @@
 import type { LoaderFunction } from 'remix';
-import { Outlet, useLoaderData, Link, json } from 'remix';
-import { db } from '~/utils/db.server';
-import { getUser } from '~/utils/session.server';
+import type { product } from '~/api/products';
+
+import { Outlet, useLoaderData, Link, useCatch } from 'remix';
+import { getProducts } from '~/api/products';
 import { MdOutlineDevicesOther } from 'react-icons/md';
 import { FaTools } from 'react-icons/fa';
 
-type LoaderData = {
-	user: Awaited<ReturnType<typeof getUser>>;
-	productListItems: Array<{ productId: string; device: string }>;
-};
-
-export const loader: LoaderFunction = async ({ request }) => {
-	const user = await getUser(request);
-
-	const productListItems = user
-		? await db.product.findMany({
-				take: 10,
-				select: { productId: true, device: true },
-				orderBy: { device: 'desc' }
-		  })
-		: [];
-
-	const data: LoaderData = {
-		productListItems,
-		user
-	};
-
-	return json(data);
+export const loader: LoaderFunction = async () => {
+	return getProducts();
 };
 
 /* TODO: change the Link to='/boards when Model Board created with authorId referred link */
 /* TODO: Add a pagination to product list  */
-/* TODO: Voir comment faire tri desc alphabetic order  */
+// TODO: Add a search field to product list
 
 export default function ProductsRoute() {
-	const data = useLoaderData<LoaderData>();
+	const products = useLoaderData<product[]>();
 	return (
 		<>
 			<header className='container header'>
-				<Link to='/boards' className='icon-header'>
-					<FaTools className='icon-size icon-shadow' /> Back to Boards
+				<Link to='/boards/products' className='icon-header'>
+					<FaTools className='icon-size icon-shadow' /> Back to Products board
 				</Link>
 				<h1>Create New Product</h1>
 			</header>
 			<main className='grid-container'>
-				{data.productListItems.length ? (
+				{products.length ? (
 					<>
 						<div className='form-content'>
 							<MdOutlineDevicesOther className='icon-size icon-container' />
 							<p>Available products:</p>
 							<ul>
-								{data.productListItems.map(({ productId, device }) => (
-									<li key={productId}>
-										<Link to={productId} prefetch='intent'>
-											{device}
+								{products.map((product) => (
+									<li key={product.productId}>
+										<Link to={product.productId} prefetch='intent'>
+											{product.device}
 										</Link>
 									</li>
 								))}
@@ -68,5 +49,30 @@ export default function ProductsRoute() {
 				</div>
 			</main>
 		</>
+	);
+}
+
+export function CatchBoundary() {
+	const caught = useCatch();
+
+	if (caught.status === 401) {
+		return (
+			<div className='container form-container'>
+				<p>You must be logged in to add a new product.</p>
+				<Link to='/login?redirectTo=/products/new-product'>
+					<button className='btn form-btn'>Login</button>
+				</Link>
+			</div>
+		);
+	}
+	throw new Error(`Unexpected caught response with status: ${caught.status}`);
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+	console.error(error);
+	return (
+		<div className='container form-container'>
+			Something unexpected went wrong. Sorry about that.
+		</div>
 	);
 }

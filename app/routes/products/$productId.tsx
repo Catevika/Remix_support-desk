@@ -14,8 +14,10 @@ import {
 } from 'remix';
 import { db } from '~/utils/db.server';
 import { getUserId, requireUserId } from '~/utils/session.server';
-import ProductDisplay from '~/components/Product';
+import ProductDisplay from '~/components/ProductDisplay';
 import styles from '~/styles/form.css';
+
+// TODO: Insert Meta to describe what's going on in this file through the page tab
 
 export const links: LinksFunction = () => {
 	return [{ rel: 'stylesheet', href: styles }];
@@ -114,16 +116,12 @@ export default function ProductRoute() {
 	return (
 		<>
 			<main className='form-container'>
-				<p>
-					{data.username && (
-						<h1>
-							Product created by:{' '}
-							<span>{`${
-								data.username?.charAt(0).toUpperCase() + data.username?.slice(1)
-							}`}</span>
-						</h1>
-					)}
-				</p>
+				{data.username && (
+					<p>
+						Device created by{' '}
+						<span className='capitalize'>{data.username}</span>
+					</p>
+				)}
 				<div className='form-content'>
 					<ProductDisplay
 						device={data.device}

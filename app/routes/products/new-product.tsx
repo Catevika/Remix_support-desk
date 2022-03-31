@@ -4,15 +4,15 @@ import {
 	LoaderFunction,
 	ActionFunction,
 	redirect,
-	useTransition,
 	useCatch
 } from 'remix';
 import { Form, Link, useLoaderData, useActionData } from 'remix';
-import ProductDisplay from '~/components/Product';
 
 import stylesUrl from '~/styles/form.css';
 import { getUser, requireUserId } from '~/utils/session.server';
 import { db } from '~/utils/db.server';
+
+// TODO: Insert Meta to describe what's going on in this file through the page tab
 
 export const links: LinksFunction = () => {
 	return [{ rel: 'stylesheet', href: stylesUrl }];
@@ -36,7 +36,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 function validateProduct(device: string) {
 	if (!device || device.length < 3) {
-		return 'Device must be at least 3 characters long';
+		return 'Product must be at least 3 characters long';
 	}
 }
 
@@ -59,7 +59,7 @@ export const action: ActionFunction = async ({ request }) => {
 	const device = form.get('device');
 	if (typeof device !== 'string') {
 		return badRequest({
-			formError: `Device must be an at least 3 characters long string`
+			formError: `Product must be an at least 3 characters long string`
 		});
 	}
 
@@ -83,51 +83,34 @@ export const action: ActionFunction = async ({ request }) => {
 		});
 	}
 
-	const product = await db.product.create({
+	await db.product.create({
 		data: { device, authorId: userId }
 	});
-	return redirect(`/products/${product.productId}`);
+	return redirect(`/products/new-product`);
 };
 
 export default function NewProductRoute() {
 	const data = useLoaderData<LoaderData>();
 	const actionData = useActionData<ActionData>();
-	const transition = useTransition();
-
-	if (transition.submission) {
-		const username = transition.submission.formData.get('username');
-		const device = transition.submission.formData.get('device');
-		if (
-			typeof username === 'string' &&
-			typeof device === 'string' &&
-			!validateProduct(device)
-		) {
-			return (
-				<>
-					<p>Product created by: {username}</p>
-					<ProductDisplay device={device} isOwner={true} canDelete={false} />
-				</>
-			);
-		}
-	}
 
 	return (
 		<>
 			<main className='form-container'>
 				<div className='form-content'>
-					<Form method='post' className='form'>
+					<Form reloadDocument method='post' className='form'>
 						<div className='form-group'>
-							<label htmlFor='username'>Product added by:</label>
+							<label htmlFor='username'>New Product added by</label>
 							<input
 								type='text'
 								name='username'
 								value={data?.user?.username}
 								disabled
+								className='capitalize'
 							/>
 						</div>
 						<div className='form-group'>
 							<label htmlFor='device'>
-								Device:{' '}
+								New Product:{' '}
 								<input
 									type='text'
 									defaultValue={actionData?.fields?.device}
@@ -156,15 +139,9 @@ export default function NewProductRoute() {
 									{actionData.formError}
 								</p>
 							) : null}
-							{transition.submission ? (
-								<button type='submit' className='btn form-btn'>
-									Adding new product to the database...
-								</button>
-							) : (
-								<button type='submit' className='btn form-btn'>
-									Add
-								</button>
-							)}
+							<button type='submit' className='btn form-btn'>
+								Add
+							</button>
 						</div>
 					</Form>
 				</div>
@@ -179,7 +156,7 @@ export function CatchBoundary() {
 	if (caught.status === 401) {
 		return (
 			<div className='container form-container'>
-				<p>You must be logged in to create a product.</p>
+				<p>You must be logged in to add a new product.</p>
 				<Link to='/login?redirectTo=/products/new-product'>
 					<button className='btn form-btn'>Login</button>
 				</Link>
