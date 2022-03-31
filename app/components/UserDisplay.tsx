@@ -1,7 +1,11 @@
 import { User } from '@prisma/client';
 import { Link } from 'remix';
 
-// * replace Link with the back button that comes back to the previous route
+/* TODO replace Link with the back button that comes back to the previous route */
+/* TODO add the loader for role when register fixed */
+/* TODO - replace the Form with the DeleteButton component */
+
+// FIXME
 
 export function UserDisplay(user: User) {
 	return (
