@@ -14,8 +14,10 @@ import {
 } from 'remix';
 import { db } from '~/utils/db.server';
 import { getUserId, requireUserId } from '~/utils/session.server';
-import RoleDisplay from '~/components/Role';
+import DeleteButton from '~/components/DeleteButton';
 import styles from '~/styles/form.css';
+
+// TODO: Insert Meta to describe what's going on in this file through the page tab
 
 export const links: LinksFunction = () => {
 	return [{ rel: 'stylesheet', href: styles }];
@@ -115,20 +117,15 @@ export default function RoleRoute() {
 			<main className='form-container'>
 				<p>
 					{data?.username && (
-						<h1>
-							Role created by:{' '}
-							<span>{`${
-								data.username?.charAt(0).toUpperCase() + data.username?.slice(1)
-							}`}</span>
-						</h1>
+						<>
+							Role created by{' '}
+							<span className='capitalize'>{data.username}</span>
+						</>
 					)}
 				</p>
 				<div className='form-content'>
-					<RoleDisplay
-						roleType={data.roleType}
-						isOwner={data.isOwner}
-						canDelete={data.canDelete}
-					/>
+					<p>{data.roleType}</p>
+					<DeleteButton isOwner={data.isOwner} canDelete={data.canDelete} />
 				</div>
 				<Link to='/roles/new-role'>
 					<button className='btn form-btn'>Back to Create Role</button>

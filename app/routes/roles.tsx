@@ -1,40 +1,21 @@
 import type { LoaderFunction } from 'remix';
-import { Outlet, useLoaderData, Link, json } from 'remix';
-import { db } from '~/utils/db.server';
-import { getUser } from '~/utils/session.server';
+import type { role } from '~/api/roles';
+import { Outlet, useLoaderData, Link, useCatch } from 'remix';
+import { getRoles } from '~/api/roles';
 import { MdMiscellaneousServices } from 'react-icons/md';
 import { FaTools } from 'react-icons/fa';
 
-type LoaderData = {
-	user: Awaited<ReturnType<typeof getUser>>;
-	roleListItems: Array<{ roleId: string; roleType: string }>;
-};
-
-export const loader: LoaderFunction = async ({ request }) => {
-	const user = await getUser(request);
-
-	const roleListItems = user
-		? await db.role.findMany({
-				take: 10,
-				select: { roleId: true, roleType: true },
-				orderBy: { roleType: 'desc' }
-		  })
-		: [];
-
-	const data: LoaderData = {
-		roleListItems,
-		user
-	};
-
-	return json(data);
+export const loader: LoaderFunction = async () => {
+	return getRoles();
 };
 
 /* TODO: change the Link to='/boards when Model Board created with authorId referred link */
-/* TODO: Add a pagination to service list  */
-/* TODO: Voir comment faire tri desc alphabetic order  */
+/* TODO: Add a pagination to role list  */
+/* TODO: Voir si j'ajoute le user comme dans products  */
+// TODO: Add a search field to product list
 
 export default function RolesRoute() {
-	const data = useLoaderData<LoaderData>();
+	const roles = useLoaderData<role[]>();
 	return (
 		<>
 			<header className='container header'>
@@ -44,16 +25,16 @@ export default function RolesRoute() {
 				<h1>Create New Role</h1>
 			</header>
 			<main className='grid-container'>
-				{data.roleListItems.length ? (
+				{roles.length ? (
 					<>
 						<div className='form-content'>
 							<MdMiscellaneousServices className='icon-size icon-container' />
 							<p>Available roles:</p>
 							<ul>
-								{data.roleListItems.map(({ roleId, roleType }) => (
-									<li key={roleId}>
-										<Link to={roleId} prefetch='intent'>
-											{roleType}
+								{roles.map((role) => (
+									<li key={role.roleId}>
+										<Link to={role.roleId} prefetch='intent'>
+											{role.roleType}
 										</Link>
 									</li>
 								))}
@@ -68,5 +49,30 @@ export default function RolesRoute() {
 				</div>
 			</main>
 		</>
+	);
+}
+
+export function CatchBoundary() {
+	const caught = useCatch();
+
+	if (caught.status === 401) {
+		return (
+			<div className='container form-container'>
+				<p>You must be logged in to create a role.</p>
+				<Link to='/login?redirectTo=/roles/new-role'>
+					<button className='btn form-btn'>Login</button>
+				</Link>
+			</div>
+		);
+	}
+	throw new Error(`Unexpected caught response with status: ${caught.status}`);
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+	console.error(error);
+	return (
+		<div className='container form-container'>
+			Something unexpected went wrong. Sorry about that.
+		</div>
 	);
 }

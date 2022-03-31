@@ -1,17 +1,14 @@
 import { Form } from 'remix';
 
-export default function RoleDisplay({
-	roleType,
+export default function DeleteButton({
 	isOwner,
 	canDelete = true
 }: {
-	roleType: string;
 	isOwner: boolean;
 	canDelete?: boolean;
 }) {
 	return (
 		<>
-			<p>{roleType}</p>
 			{isOwner ? (
 				<Form method='post'>
 					<input type='hidden' name='_method' value='delete' />

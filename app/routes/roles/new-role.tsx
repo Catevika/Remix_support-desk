@@ -4,15 +4,15 @@ import {
 	LoaderFunction,
 	ActionFunction,
 	redirect,
-	// useTransition,
 	useCatch
 } from 'remix';
 import { Form, Link, useLoaderData, useActionData } from 'remix';
-// import RoleDisplay from '~/components/Role';
 
 import stylesUrl from '~/styles/form.css';
 import { getUser, requireUserId } from '~/utils/session.server';
 import { db } from '~/utils/db.server';
+
+// TODO: Insert Meta to describe what's going on in this file through the page tab
 
 export const links: LinksFunction = () => {
 	return [{ rel: 'stylesheet', href: stylesUrl }];
@@ -83,34 +83,15 @@ export const action: ActionFunction = async ({ request }) => {
 		});
 	}
 
-	/* const role =  */ await db.role.create({
+	await db.role.create({
 		data: { roleType, authorId: userId }
 	});
-	// return redirect(`/roles/${role.roleId}`);
 	return redirect(`/roles/new-role`);
 };
 
 export default function NewRoleRoute() {
 	const data = useLoaderData<LoaderData>();
 	const actionData = useActionData<ActionData>();
-	// const transition = useTransition();
-
-	// if (transition.submission) {
-	// 	const username = transition.submission.formData.get('username');
-	// 	const roleType = transition.submission.formData.get('roleType');
-	// 	if (
-	// 		typeof username === 'string' &&
-	// 		typeof roleType === 'string' &&
-	// 		!validateRole(roleType)
-	// 	) {
-	// 		return (
-	// 			<>
-	// 				<p>Role created by: {username}</p>
-	// 				<RoleDisplay roleType={roleType} isOwner={true} canDelete={false} />
-	// 			</>
-	// 		);
-	// 	}
-	// }
 
 	return (
 		<>
@@ -118,17 +99,18 @@ export default function NewRoleRoute() {
 				<div className='form-content'>
 					<Form reloadDocument method='post' className='form'>
 						<div className='form-group'>
-							<label htmlFor='username'>Role added by:</label>
+							<label htmlFor='username'>New Role added by:</label>
 							<input
 								type='text'
 								name='username'
 								value={data?.user?.username}
 								disabled
+								className='capitalize'
 							/>
 						</div>
 						<div className='form-group'>
 							<label htmlFor='roleType'>
-								Role:{' '}
+								New Role:{' '}
 								<input
 									type='text'
 									defaultValue={actionData?.fields?.roleType}
@@ -155,15 +137,9 @@ export default function NewRoleRoute() {
 									{actionData.formError}
 								</p>
 							) : null}
-							{/* {transition.submission ? (*/}
-							{/* <button type='submit' className='btn form-btn'>
-								Adding new role to the database...
-							</button> */}
-							{/* ) : ( */}
 							<button type='submit' className='btn form-btn'>
 								Add
 							</button>
-							{/* )} */}
 						</div>
 					</Form>
 				</div>
