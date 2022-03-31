@@ -3,14 +3,13 @@ import { createCookieSessionStorage, redirect } from 'remix';
 import { db } from '~/utils/db.server';
 
 type RegisterForm = {
-  username?: string;
+  username: string;
   email: string;
   password: string;
-  service?: string;
+  service: string;
 };
 
 type LoginForm = {
-  username?: string;
   email: string;
   password: string;
 };
@@ -21,12 +20,12 @@ export async function register({ username, email, password, service }: RegisterF
   return { id: user.id, data: user };
 }
 
-export async function login({ username, email, password }: LoginForm) {
+export async function login({ email, password }: LoginForm) {
   const user = await db.user.findUnique({ where: { email } });
   if (!user) return null;
   const isCorrectPassword = await bcrypt.compare(password, user.passwordHash);
   if (!isCorrectPassword) return null;
-  return { id: user.id, username, email };
+  return { id: user.id, email };
 }
 
 const sessionSecret = process.env.SESSION_SECRET;
@@ -43,7 +42,7 @@ const storage = createCookieSessionStorage({
     sameSite: 'lax',
     maxAge: 60 * 60 * 24 * 30, // 30 days,
     path: '/',
-    name: 'RJ_session',
+    name: 'support_session',
     secrets: [sessionSecret]
   }
 });

@@ -18,6 +18,7 @@ model User {
   username     String   @default("")
   email        String   @unique
   passwordHash String
+  service      String
 
   Role    Role[]
   Board   Board[]
@@ -74,7 +75,7 @@ model Ticket {
   ticketId        String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  ticket          String   @default("")
+  description     String   @default("")
 
   Status Status[]
   Notes  Note[]
@@ -100,7 +101,7 @@ model Note {
   noteId       String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  note         String   @default("")
+  text         String   @default("")
 
   @@map("Notes")
 }
