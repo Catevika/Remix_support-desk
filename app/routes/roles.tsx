@@ -1,5 +1,5 @@
 import type { LoaderFunction } from 'remix';
-import type { role } from '~/api/roles';
+import type { Role } from '~/api/roles';
 import { Outlet, useLoaderData, Link, useCatch } from 'remix';
 import { getRoles } from '~/api/roles';
 import { MdMiscellaneousServices } from 'react-icons/md';
@@ -15,7 +15,7 @@ export const loader: LoaderFunction = async () => {
 // TODO: Add a search field to product list
 
 export default function RolesRoute() {
-	const roles = useLoaderData<role[]>();
+	const roles = useLoaderData<Role[]>();
 	return (
 		<>
 			<header className='container header'>
@@ -57,11 +57,13 @@ export function CatchBoundary() {
 
 	if (caught.status === 401) {
 		return (
-			<div className='container form-container'>
-				<p>You must be logged in to create a role.</p>
-				<Link to='/login?redirectTo=/roles/new-role'>
-					<button className='btn form-btn'>Login</button>
-				</Link>
+			<div className='error-container'>
+				<div className='form-container form-content'>
+					<p>You must be logged in to create a role.</p>
+					<Link to='/login?redirectTo=/roles/new-role'>
+						<button className='btn form-btn'>Login</button>
+					</Link>
+				</div>
 			</div>
 		);
 	}
@@ -71,8 +73,10 @@ export function CatchBoundary() {
 export function ErrorBoundary({ error }: { error: Error }) {
 	console.error(error);
 	return (
-		<div className='container form-container'>
-			Something unexpected went wrong. Sorry about that.
+		<div className='error-container'>
+			<div className='form-container form-content'>
+				Something unexpected went wrong. Sorry about that.
+			</div>
 		</div>
 	);
 }

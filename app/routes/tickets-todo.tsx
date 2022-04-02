@@ -1,40 +1,40 @@
 import type { LoaderFunction } from 'remix';
-import type { Product } from '~/api/products';
-
+import type { Ticket } from '~/api/tickets';
 import { Outlet, useLoaderData, Link, useCatch } from 'remix';
-import { getProducts } from '~/api/products';
-import { MdOutlineDevicesOther } from 'react-icons/md';
+import { getTickets } from '~/api/tickets';
+import { MdMiscellaneousServices } from 'react-icons/md';
 import { FaTools } from 'react-icons/fa';
 
 export const loader: LoaderFunction = async () => {
-	return getProducts();
+	return getTickets();
 };
 
 /* TODO: change the Link to='/boards when Model Board created with authorId referred link */
-/* TODO: Add a pagination to product list  */
+/* TODO: Add a pagination to role list  */
+/* TODO: Voir si j'ajoute le user comme dans products  */
 // TODO: Add a search field to product list
 
-export default function ProductsRoute() {
-	const products = useLoaderData<Product[]>();
+export default function TicketsRoute() {
+	const tickets = useLoaderData<Ticket[]>();
 	return (
 		<>
 			<header className='container header'>
-				<Link to='/boards/products' className='icon-header'>
-					<FaTools className='icon-size icon-shadow' /> Back to Products board
+				<Link to='/boards' className='icon-header'>
+					<FaTools className='icon-size icon-shadow' /> Back to Boards
 				</Link>
-				<h1>Create New Product</h1>
+				<h1>Create New Ticket</h1>
 			</header>
 			<main className='grid-container'>
-				{products.length ? (
+				{tickets.length ? (
 					<>
 						<div className='form-content'>
-							<MdOutlineDevicesOther className='icon-size icon-container' />
-							<p>Available products:</p>
+							<MdMiscellaneousServices className='icon-size icon-container' />
+							<p>Available tickets:</p>
 							<ul>
-								{products.map((product) => (
-									<li key={product.productId}>
-										<Link to={product.productId} prefetch='intent'>
-											{product.device}
+								{tickets.map((ticket) => (
+									<li key={ticket.ticketId}>
+										<Link to={ticket.ticketId} prefetch='intent'>
+											{ticket.description}
 										</Link>
 									</li>
 								))}
@@ -59,8 +59,8 @@ export function CatchBoundary() {
 		return (
 			<div className='error-container'>
 				<div className='form-container form-content'>
-					<p>You must be logged in to add a new product.</p>
-					<Link to='/login?redirectTo=/products/new-product'>
+					<p>You must be logged in to create a role.</p>
+					<Link to='/login?redirectTo=/roles/new-role'>
 						<button className='btn form-btn'>Login</button>
 					</Link>
 				</div>

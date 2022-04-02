@@ -1,40 +1,39 @@
 import type { LoaderFunction } from 'remix';
-import type { Product } from '~/api/products';
-
+import type { Status } from '~/api/status';
 import { Outlet, useLoaderData, Link, useCatch } from 'remix';
-import { getProducts } from '~/api/products';
-import { MdOutlineDevicesOther } from 'react-icons/md';
+import { getStatus } from '~/api/status';
+import { SiStatuspage } from 'react-icons/si';
 import { FaTools } from 'react-icons/fa';
 
 export const loader: LoaderFunction = async () => {
-	return getProducts();
+	return getStatus();
 };
 
 /* TODO: change the Link to='/boards when Model Board created with authorId referred link */
-/* TODO: Add a pagination to product list  */
-// TODO: Add a search field to product list
+/* TODO: Add a pagination to status list  */
+// TODO: Add a search field to status list
 
-export default function ProductsRoute() {
-	const products = useLoaderData<Product[]>();
+export default function RolesRoute() {
+	const status = useLoaderData<Status[]>();
 	return (
 		<>
 			<header className='container header'>
-				<Link to='/boards/products' className='icon-header'>
-					<FaTools className='icon-size icon-shadow' /> Back to Products board
+				<Link to='/boards' className='icon-header'>
+					<FaTools className='icon-size icon-shadow' /> Back to Boards
 				</Link>
-				<h1>Create New Product</h1>
+				<h1>Create New Status</h1>
 			</header>
 			<main className='grid-container'>
-				{products.length ? (
+				{status.length ? (
 					<>
 						<div className='form-content'>
-							<MdOutlineDevicesOther className='icon-size icon-container' />
-							<p>Available products:</p>
+							<SiStatuspage className='icon-size icon-container' />
+							<p>Available status:</p>
 							<ul>
-								{products.map((product) => (
-									<li key={product.productId}>
-										<Link to={product.productId} prefetch='intent'>
-											{product.device}
+								{status.map((status) => (
+									<li key={status.statusId}>
+										<Link to={status.statusId} prefetch='intent'>
+											{status.type}
 										</Link>
 									</li>
 								))}
@@ -59,8 +58,8 @@ export function CatchBoundary() {
 		return (
 			<div className='error-container'>
 				<div className='form-container form-content'>
-					<p>You must be logged in to add a new product.</p>
-					<Link to='/login?redirectTo=/products/new-product'>
+					<p>You must be logged in to create a status.</p>
+					<Link to='/login?redirectTo=/roles/new-role'>
 						<button className='btn form-btn'>Login</button>
 					</Link>
 				</div>

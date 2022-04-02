@@ -1,7 +1,7 @@
-import { Form } from 'remix';
-import type { Ticket, Product, Status } from '@prisma/client';
-import BackButton from './BackButton';
-// import { FaPlus } from 'react-icons/fa';
+import DeleteButton from './DeleteButton';
+
+// TODO: Add notes
+/* TODO Replace with form to get an editable ticket */
 
 export function TicketDisplay({
 	ticket,
@@ -10,19 +10,16 @@ export function TicketDisplay({
 	isOwner,
 	canDelete = true
 }: {
-	ticket: Pick<
-		Ticket,
-		'ticketId' | 'productTicketId' | 'createdAt' | 'description'
-	>;
-	product: Pick<Product, 'productId' | 'name'>;
-	status: Pick<Status, 'statusTicketId' | 'type'>;
+	ticket: string;
+	status: string;
+	product: string;
 	isOwner: boolean;
 	canDelete?: boolean;
 }) {
 	return (
 		<div className='ticket-page'>
 			<header className='ticket-header'>
-				<BackButton url='/tickets' />
+				<Link to='/tickets'>Back to Tickets</Link>
 				<h2>
 					Ticket Id: {ticket.ticketId}
 					<span
@@ -42,7 +39,7 @@ export function TicketDisplay({
 
 				<div className='ticket-desc'>
 					<h3>Product</h3>
-					<p>{product.name}</p>
+					<p>{product.device}</p>
 				</div>
 				<div className='ticket-desc'>
 					<h3>Description of Issue</h3>

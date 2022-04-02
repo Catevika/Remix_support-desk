@@ -1,32 +1,41 @@
-import { User } from '@prisma/client';
-import { Link } from 'remix';
-
+import { User } from '~/api/users';
+import DeleteButton from './DeleteButton';
 /* TODO replace Link with the back button that comes back to the previous route */
-/* TODO add the loader for role when register fixed */
-/* TODO - replace the Form with the DeleteButton component */
 
-// FIXME
-
-export function UserDisplay(user: User) {
+export default function UserDisplay({
+	user,
+	isOwner,
+	canDelete = true
+}: {
+	user: User;
+	isOwner: boolean;
+	canDelete?: boolean;
+}) {
 	return (
-		<main className='ticket-page'>
-			<Link to='/'>Back</Link>
-			<h2>User Id: {user.id}</h2>
-			<hr />
-			<h3>Date Registered: {user.createdAt.toLocaleString()}</h3>
-
-			<div className='ticket-desc'>
-				<h3>Name</h3>
-				<p>{user.username}</p>
-			</div>
-			<div className='ticket-desc'>
-				<h3>Email</h3>
-				<p>{user.email}</p>
-			</div>
-			<div className='ticket-desc'>
-				<h3>Service</h3>
-				<p>{user.service}</p>
-			</div>
-		</main>
+		<>
+			{user ? (
+				<main className='main container'>
+					<p className='list'>
+						Name:&nbsp;<span>{user.username}</span>
+					</p>
+					<p className='list'>
+						Email:&nbsp;<span>{user.email}</span>
+					</p>
+					<p className='list'>
+						Service:&nbsp;<span>{user.service}</span>
+					</p>
+					<p className='list'>
+						Date Registered:&nbsp;
+						<span>{user.createdAt.toLocaleString()}</span>
+					</p>
+					<p className='list'>
+						Date Updated:&nbsp;<span>{user.updatedAt.toLocaleString()}</span>
+					</p>
+				</main>
+			) : null}
+			{isOwner ? (
+				<DeleteButton isOwner={isOwner} canDelete={canDelete} />
+			) : null}
+		</>
 	);
 }

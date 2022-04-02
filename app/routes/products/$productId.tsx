@@ -1,9 +1,4 @@
-import type {
-	LinksFunction,
-	LoaderFunction,
-	ActionFunction,
-	MetaFunction
-} from 'remix';
+import type { LoaderFunction, ActionFunction, MetaFunction } from 'remix';
 import {
 	Link,
 	json,
@@ -13,15 +8,10 @@ import {
 	useParams
 } from 'remix';
 import { db } from '~/utils/db.server';
-import { getUserId, requireUserId } from '~/utils/session.server';
+import { requireUserId } from '~/utils/session.server';
 import ProductDisplay from '~/components/ProductDisplay';
-import styles from '~/styles/form.css';
 
-// TODO: Insert Meta to describe what's going on in this file through the page tab
-
-export const links: LinksFunction = () => {
-	return [{ rel: 'stylesheet', href: styles }];
-};
+// TODO: Insérer le goTo Login ici
 
 export const meta: MetaFunction = ({
 	data
@@ -48,9 +38,7 @@ type LoaderData = {
 	canDelete: boolean;
 };
 
-export const loader: LoaderFunction = async ({ request, params }) => {
-	const userId = await getUserId(request);
-
+export const loader: LoaderFunction = async ({ params }) => {
 	const product = await db.product.findUnique({
 		where: { productId: params.productId }
 	});
@@ -79,7 +67,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 		id,
 		username,
 		device: product.device,
-		isOwner: userId === product.authorId,
+		isOwner: id === product.authorId,
 		canDelete: true
 	};
 	return json(data);
@@ -144,21 +132,27 @@ export function CatchBoundary() {
 		case 400: {
 			return (
 				<div className='error-container'>
-					What you're trying to do is not allowed.
+					<div className='form-container form-content'>
+						What you're trying to do is not allowed.
+					</div>
 				</div>
 			);
 		}
 		case 404: {
 			return (
 				<div className='error-container'>
-					{params.productId} does not exist.
+					<div className='form-container form-content'>
+						{params.productId} does not exist.
+					</div>
 				</div>
 			);
 		}
 		case 401: {
 			return (
 				<div className='error-container'>
-					Sorry, but {params.productId} is not your product.
+					<div className='form-container form-content'>
+						Sorry, but {params.productId} is not your product.
+					</div>
 				</div>
 			);
 		}
@@ -172,6 +166,15 @@ export function ErrorBoundary({ error }: { error: Error }) {
 	console.error(error);
 	const { productId } = useParams();
 	return (
-		<div className='error-container'>{`There was an error loading the product by the id ${productId}. Sorry.`}</div>
+		<div className='error-container'>
+			<div className='form-container form-content'>
+				There was an error loading the product by the id:{' '}
+				<p>
+					{' '}
+					<span>{`${productId}.`}</span>
+				</p>
+				<p>Sorry.</p>
+			</div>
+		</div>
 	);
 }
