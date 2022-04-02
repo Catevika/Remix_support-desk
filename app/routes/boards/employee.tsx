@@ -1,5 +1,5 @@
 import type { LoaderFunction } from 'remix';
-import { useLoaderData, Link, json, Form } from 'remix';
+import { useLoaderData, Link, json, Form, useCatch } from 'remix';
 import { getUser } from '~/utils/session.server';
 import { FaTools, FaQuestionCircle, FaTicketAlt } from 'react-icons/fa';
 import { CgProfile } from 'react-icons/cg';
@@ -12,6 +12,10 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async ({ request }) => {
 	const user = await getUser(request);
+
+	if (!user) {
+		throw new Response('Unauthorized', { status: 401 });
+	}
 
 	const data: LoaderData = {
 		user
@@ -42,23 +46,57 @@ export default function Employee() {
 					, what do you need help with?
 				</p>
 			</main>
-			<nav className='nav container'>
-				<Link
-					to='/tickets/new-ticket'
-					className='btn btn-reverse btn-block nav-links'
-				>
-					<FaQuestionCircle className='icon-size icon-space' />
-					&nbsp;Create New Ticket
-				</Link>
-				<Link to='/tickets' className='btn btn-block nav-links'>
-					<FaTicketAlt className='icon-size icon-space' />
-					&nbsp;View my Tickets
-				</Link>
-				<Link to='/users/me' className='btn btn-block nav-links'>
-					<CgProfile className='icon-size icon-space' />
-					&nbsp;View my Profile
-				</Link>
-			</nav>
+			{data.user ? (
+				<nav className='nav container'>
+					<Link
+						to='/tickets/new-ticket'
+						className='btn btn-reverse btn-block nav-links'
+					>
+						<FaQuestionCircle className='icon-size icon-space' />
+						&nbsp;Create New Ticket
+					</Link>
+					<Link to='/tickets' className='btn btn-block nav-links'>
+						<FaTicketAlt className='icon-size icon-space' />
+						&nbsp;View my Tickets
+					</Link>
+					<Link
+						to={`/users/${data.user.id}`}
+						className='btn btn-block nav-links'
+					>
+						<CgProfile className='icon-size icon-space' />
+						&nbsp;View my Profile
+					</Link>
+				</nav>
+			) : null}
 		</>
+	);
+}
+
+export function CatchBoundary() {
+	const caught = useCatch();
+
+	if (caught.status === 401) {
+		return (
+			<div className='error-container'>
+				<div className='form-container form-content'>
+					<p>You must be logged in to access this board.</p>
+					<Link to='/login?redirectTo=/boards/employee'>
+						<button className='btn form-btn'>Login</button>
+					</Link>
+				</div>
+			</div>
+		);
+	}
+	throw new Error(`Unexpected caught response with status: ${caught.status}`);
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+	console.error(error);
+	return (
+		<div className='error-container'>
+			<div className='form-container form-content'>
+				Something unexpected went wrong. Sorry about that.
+			</div>
+		</div>
 	);
 }
