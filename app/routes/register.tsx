@@ -1,4 +1,4 @@
-import type { ActionFunction, LinksFunction, MetaFunction } from 'remix';
+import type { ActionFunction, MetaFunction } from 'remix';
 import {
 	useActionData,
 	json,
@@ -11,12 +11,7 @@ import {
 import { db } from '~/utils/db.server';
 import { createUserSession, register } from '~/utils/session.server';
 import { FaTools } from 'react-icons/fa';
-import styles from '~/styles/form.css';
 import serviceList from '~/data/serviceList.json';
-
-export const links: LinksFunction = () => {
-	return [{ rel: 'stylesheet', href: styles }];
-};
 
 export const meta: MetaFunction = () => {
 	return {
@@ -33,11 +28,6 @@ function validateUsername(username: unknown) {
 
 function validateEmail(email: unknown) {
 	if (typeof email !== 'string') {
-		return 'Email address is not valid';
-	}
-	const mailformat =
-		/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-	if (email.match(mailformat) === null) {
 		return 'Email address is not valid';
 	}
 }
