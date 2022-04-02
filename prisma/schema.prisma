@@ -20,10 +20,10 @@ model User {
   passwordHash String
   service      String
 
-  Role    Role[]
-  Board   Board[]
-  Products Product[]
+  Role     Role[]
+  Board    Board[]
   Tickets  Ticket[]
+  Products Product[]
   Status   Status[]
   Notes    Note[]
   @@map("Users")
@@ -42,18 +42,17 @@ model Role {
 }
 
 model Board {
-  author         User     @relation(fields: [authorId], references: [id])
-  authorId       String   @db.ObjectId
-  boardRole      Role     @relation(fields: [boardRoleId], references: [roleId])
-  boardRoleId    String   @db.ObjectId
-  boardId        String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  access         String   @unique @default("")
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    String   @db.ObjectId
+  boardRole   Role     @relation(fields: [boardRoleId], references: [roleId])
+  boardRoleId String   @db.ObjectId
+  boardId     String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  access      String   @unique @default("")
 
   @@map("Boards")
 }
-
 
 model Product {
   author    User     @relation(fields: [authorId], references: [id])
@@ -72,32 +71,33 @@ model Ticket {
   authorId        String   @db.ObjectId
   ticketProduct   Product  @relation(fields: [ticketProductId], references: [productId])
   ticketProductId String   @db.ObjectId
+  ticketStatus    Status   @relation(fields: [ticketStatusId], references: [statusId])
+  ticketStatusId  String   @db.ObjectId
   ticketId        String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   description     String   @default("")
 
-  Status Status[]
-  Notes  Note[]
+  Notes Note[]
   @@map("Tickets")
 }
 
 model Status {
-  technician      User     @relation(fields: [technicianId], references: [id])
-  technicianId    String   @db.ObjectId
-  statusTicket    Ticket   @relation(fields: [statusTicketId], references: [ticketId])
-  statusTicketId  String   @db.ObjectId
-  statusId        String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  type            String   @unique @default("")
+  technician   User     @relation(fields: [technicianId], references: [id])
+  technicianId String   @db.ObjectId
+  statusId     String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  type         String   @unique @default("")
+  
+  Ticket       Ticket[]
 }
 
 model Note {
   noteUser     User     @relation(fields: [noteUserId], references: [id])
   noteUserId   String   @db.ObjectId
-  NoteTicket   Ticket   @relation(fields: [NoteTicketId], references: [ticketId])
-  NoteTicketId String   @db.ObjectId
+  noteTicket   Ticket   @relation(fields: [noteTicketId], references: [ticketId])
+  noteTicketId String   @db.ObjectId
   noteId       String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
