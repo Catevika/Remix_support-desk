@@ -7,14 +7,18 @@ import {
 	ScrollRestoration
 } from 'remix';
 import type { MetaFunction, LinksFunction } from 'remix';
-import styles from '~/styles/app.css';
+import appStyles from '~/styles/app.css';
+import formStyles from '~/styles/form.css';
 
 export const meta: MetaFunction = () => {
 	return { title: 'Remix_support-desk', description: 'Remix support desk' };
 };
 
 export const links: LinksFunction = () => {
-	return [{ rel: 'stylesheet', href: styles }];
+	return [
+		{ rel: 'stylesheet', href: appStyles },
+		{ rel: 'stylesheet', href: formStyles }
+	];
 };
 
 export default function App() {

@@ -1,6 +1,5 @@
 import {
 	json,
-	LinksFunction,
 	LoaderFunction,
 	ActionFunction,
 	redirect,
@@ -8,15 +7,10 @@ import {
 } from 'remix';
 import { Form, Link, useLoaderData, useActionData } from 'remix';
 
-import stylesUrl from '~/styles/form.css';
 import { getUser, requireUserId } from '~/utils/session.server';
 import { db } from '~/utils/db.server';
 
 // TODO: Insert Meta to describe what's going on in this file through the page tab
-
-export const links: LinksFunction = () => {
-	return [{ rel: 'stylesheet', href: stylesUrl }];
-};
 
 type LoaderData = {
 	user: Awaited<ReturnType<typeof getUser>>;
@@ -155,11 +149,13 @@ export function CatchBoundary() {
 
 	if (caught.status === 401) {
 		return (
-			<div className='container form-container'>
-				<p>You must be logged in to add a new product.</p>
-				<Link to='/login?redirectTo=/products/new-product'>
-					<button className='btn form-btn'>Login</button>
-				</Link>
+			<div className='error-container'>
+				<div className='form-container form-content'>
+					<p>You must be logged in to add a new product.</p>
+					<Link to='/login?redirectTo=/products/new-product'>
+						<button className='btn form-btn'>Login</button>
+					</Link>
+				</div>
 			</div>
 		);
 	}
@@ -169,8 +165,10 @@ export function CatchBoundary() {
 export function ErrorBoundary({ error }: { error: Error }) {
 	console.error(error);
 	return (
-		<div className='container form-container'>
-			Something unexpected went wrong. Sorry about that.
+		<div className='error-container'>
+			<div className='form-container form-content'>
+				Something unexpected went wrong. Sorry about that.
+			</div>
 		</div>
 	);
 }

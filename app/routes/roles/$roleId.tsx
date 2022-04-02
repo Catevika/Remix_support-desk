@@ -1,9 +1,4 @@
-import type {
-	LinksFunction,
-	LoaderFunction,
-	ActionFunction,
-	MetaFunction
-} from 'remix';
+import type { LoaderFunction, ActionFunction, MetaFunction } from 'remix';
 import {
 	Link,
 	json,
@@ -15,13 +10,8 @@ import {
 import { db } from '~/utils/db.server';
 import { getUserId, requireUserId } from '~/utils/session.server';
 import DeleteButton from '~/components/DeleteButton';
-import styles from '~/styles/form.css';
 
 // TODO: Insert Meta to describe what's going on in this file through the page tab
-
-export const links: LinksFunction = () => {
-	return [{ rel: 'stylesheet', href: styles }];
-};
 
 export const meta: MetaFunction = ({
 	data
@@ -142,19 +132,27 @@ export function CatchBoundary() {
 		case 400: {
 			return (
 				<div className='error-container'>
-					What you're trying to do is not allowed.
+					<div className='form-container form-content'>
+						What you're trying to do is not allowed.
+					</div>
 				</div>
 			);
 		}
 		case 404: {
 			return (
-				<div className='error-container'>{params.roleId} does not exist.</div>
+				<div className='error-container'>
+					<div className='form-container form-content'>
+						{params.roleId} does not exist.
+					</div>
+				</div>
 			);
 		}
 		case 401: {
 			return (
 				<div className='error-container'>
-					Sorry, but {params.roleId} is not your role.
+					<div className='form-container form-content'>
+						Sorry, but {params.roleId} is not your role.
+					</div>
 				</div>
 			);
 		}
@@ -165,9 +163,17 @@ export function CatchBoundary() {
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
-	console.error(error);
 	const { roleId } = useParams();
 	return (
-		<div className='error-container'>{`There was an error loading the role by the id ${roleId}. Sorry.`}</div>
+		<div className='error-container'>
+			<div className='form-container form-content'>
+				There was an error loading the role by the id:{' '}
+				<p>
+					{' '}
+					<span>{`${roleId}.`}</span>
+				</p>
+				<p>Sorry.</p>
+			</div>
+		</div>
 	);
 }
