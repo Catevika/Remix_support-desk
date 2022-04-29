@@ -1,37 +1,80 @@
-import { User } from '~/api/users';
+import type { MetaFunction, LoaderFunction } from 'remix';
+import { json } from 'remix';
+import { getUser } from '~/utils/session.server';
 import DeleteButton from './DeleteButton';
-/* TODO replace Link with the back button that comes back to the previous route */
+
+export const meta: MetaFunction = ({
+	data
+}: {
+	data: LoaderData | undefined;
+}) => {
+	if (!data) {
+		return {
+			title: 'No user',
+			description: 'No user found'
+		};
+	} else {
+		return {
+			title: `${data?.user?.username}`,
+			description: `${data?.user?.username}'s profile`
+		};
+	}
+};
+
+export type LoaderData = {
+	user: Awaited<ReturnType<typeof getUser>>;
+	isOwner: boolean;
+	canDelete: boolean;
+};
+
+export const loader: LoaderFunction = async ({ request, params }) => {
+	const user = await getUser(request);
+
+	if (!user) {
+		throw new Response('User Not Found.', {
+			status: 404
+		});
+	}
+
+	const data: LoaderData = {
+		user,
+		isOwner: user.id === params.userId,
+		canDelete: true
+	};
+	return json(data);
+};
 
 export default function UserDisplay({
 	user,
 	isOwner,
 	canDelete = true
 }: {
-	user: User;
+	user: Awaited<ReturnType<typeof getUser>>;
 	isOwner: boolean;
 	canDelete?: boolean;
 }) {
 	return (
 		<>
 			{user ? (
-				<main className='main container'>
-					<p className='list'>
+				<ul className='main container'>
+					<li className='list'>
 						Name:&nbsp;<span>{user.username}</span>
-					</p>
-					<p className='list'>
+					</li>
+					<li className='list'>
 						Email:&nbsp;<span>{user.email}</span>
-					</p>
-					<p className='list'>
+					</li>
+					<li className='list'>
 						Service:&nbsp;<span>{user.service}</span>
-					</p>
-					<p className='list'>
+					</li>
+					<li className='list border-up'>
 						Date Registered:&nbsp;
-						<span>{user.createdAt.toLocaleString()}</span>
-					</p>
-					<p className='list'>
-						Date Updated:&nbsp;<span>{user.updatedAt.toLocaleString()}</span>
-					</p>
-				</main>
+						<span>{new Date(user.createdAt).toLocaleString()}</span>
+					</li>
+					<li className='list'>
+						Date Updated:&nbsp;
+						<span>{new Date(user.updatedAt).toLocaleString()}</span>
+					</li>
+				</ul>
 			) : null}
 			{isOwner ? (
 				<DeleteButton isOwner={isOwner} canDelete={canDelete} />

@@ -1,8 +1,8 @@
 import type { LoaderFunction } from 'remix';
-import type { Product } from '~/api/products';
+import type { Product } from '@prisma/client';
 
-import { Outlet, useLoaderData, Link, useCatch } from 'remix';
-import { getProducts } from '~/api/products';
+import { Form, Outlet, useLoaderData, Link, useCatch } from 'remix';
+import { getProducts } from '~/utils/products.server';
 import { MdOutlineDevicesOther } from 'react-icons/md';
 import { FaTools } from 'react-icons/fa';
 
@@ -36,6 +36,7 @@ export default function ProductsRoute() {
 										<Link to={product.productId} prefetch='intent'>
 											{product.device}
 										</Link>
+										<Form method='post'></Form>
 									</li>
 								))}
 							</ul>

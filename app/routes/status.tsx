@@ -1,12 +1,12 @@
 import type { LoaderFunction } from 'remix';
-import type { Status } from '~/api/status';
+import type { Status } from '~/utils/status.server';
 import { Outlet, useLoaderData, Link, useCatch } from 'remix';
-import { getStatus } from '~/api/status';
+import { getStatuses } from '~/utils/status.server';
 import { SiStatuspage } from 'react-icons/si';
 import { FaTools } from 'react-icons/fa';
 
 export const loader: LoaderFunction = async () => {
-	return getStatus();
+	return getStatuses();
 };
 
 /* TODO: change the Link to='/boards when Model Board created with authorId referred link */
@@ -14,7 +14,7 @@ export const loader: LoaderFunction = async () => {
 // TODO: Add a search field to status list
 
 export default function RolesRoute() {
-	const status = useLoaderData<Status[]>();
+	const statuses = useLoaderData<Status[]>();
 	return (
 		<>
 			<header className='container header'>
@@ -24,13 +24,13 @@ export default function RolesRoute() {
 				<h1>Create New Status</h1>
 			</header>
 			<main className='grid-container'>
-				{status.length ? (
+				{statuses.length ? (
 					<>
 						<div className='form-content'>
 							<SiStatuspage className='icon-size icon-container' />
 							<p>Available status:</p>
 							<ul>
-								{status.map((status) => (
+								{statuses.map((status) => (
 									<li key={status.statusId}>
 										<Link to={status.statusId} prefetch='intent'>
 											{status.type}

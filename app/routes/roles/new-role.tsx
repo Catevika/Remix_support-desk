@@ -92,16 +92,10 @@ export default function NewRoleRoute() {
 			<main className='form-container'>
 				<div className='form-content'>
 					<Form reloadDocument method='post' className='form'>
-						<div className='form-group'>
-							<label htmlFor='username'>New Role added by:</label>
-							<input
-								type='text'
-								name='username'
-								value={data?.user?.username}
-								disabled
-								className='capitalize'
-							/>
-						</div>
+						<p className='list'>
+							New Role by&nbsp;
+							<span className='capitalize'>{data?.user?.username}</span>
+						</p>
 						<div className='form-group'>
 							<label htmlFor='roleType'>
 								New Role:{' '}

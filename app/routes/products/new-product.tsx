@@ -1,11 +1,13 @@
+import type { LoaderFunction, ActionFunction } from 'remix';
 import {
+	Form,
+	Link,
 	json,
-	LoaderFunction,
-	ActionFunction,
+	useLoaderData,
+	useActionData,
 	redirect,
 	useCatch
 } from 'remix';
-import { Form, Link, useLoaderData, useActionData } from 'remix';
 
 import { getUser, requireUserId } from '~/utils/session.server';
 import { db } from '~/utils/db.server';
@@ -92,16 +94,10 @@ export default function NewProductRoute() {
 			<main className='form-container'>
 				<div className='form-content'>
 					<Form reloadDocument method='post' className='form'>
-						<div className='form-group'>
-							<label htmlFor='username'>New Product added by</label>
-							<input
-								type='text'
-								name='username'
-								value={data?.user?.username}
-								disabled
-								className='capitalize'
-							/>
-						</div>
+						<p className='list'>
+							New Product by&nbsp;
+							<span className='capitalize'>{data?.user?.username}</span>
+						</p>
 						<div className='form-group'>
 							<label htmlFor='device'>
 								New Product:{' '}
@@ -133,7 +129,12 @@ export default function NewProductRoute() {
 									{actionData.formError}
 								</p>
 							) : null}
-							<button type='submit' className='btn form-btn'>
+							<button
+								type='submit'
+								name='_action'
+								value='create'
+								className='btn form-btn'
+							>
 								Add
 							</button>
 						</div>

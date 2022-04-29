@@ -39,8 +39,8 @@ function validatePassword(password: unknown) {
 }
 
 function validateService(service: unknown) {
-	if (typeof service !== 'string' || service.length < 2) {
-		return 'Service must be at least 2 characters long';
+	if (service === '-- Please select your service --') {
+		return 'A service must be selected';
 	}
 }
 

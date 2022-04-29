@@ -26,7 +26,7 @@ export const meta: MetaFunction = ({
 	}
 	return {
 		title: `${data.device}`,
-		description: `Here ist the "${data.device}"created by ${data?.username}`
+		description: `Here ist the "${data.device}"created by ${data.username}`
 	};
 };
 
@@ -43,31 +43,28 @@ export const loader: LoaderFunction = async ({ params }) => {
 		where: { productId: params.productId }
 	});
 
-	const users = await db.user.findMany({
-		select: { id: true, username: true }
-	});
-
-	const user = users.filter((user) => user.id === product?.authorId)[0];
-
-	const { id, username } = user;
-
-	if (!username || !id) {
-		throw new Response('User Not Found.', {
-			status: 404
-		});
-	}
-
 	if (!product) {
 		throw new Response('Product Not Found.', {
 			status: 404
 		});
 	}
 
+	const user = await db.user.findUnique({
+		where: { id: product.authorId },
+		select: { id: true, username: true }
+	});
+
+	if (!user) {
+		throw new Response('User Not Found.', {
+			status: 404
+		});
+	}
+
 	const data: LoaderData = {
-		id,
-		username,
+		id: user.id,
+		username: user.username,
 		device: product.device,
-		isOwner: id === product.authorId,
+		isOwner: user.id === product.authorId,
 		canDelete: true
 	};
 	return json(data);

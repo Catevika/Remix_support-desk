@@ -3,7 +3,6 @@
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["mongoDb"]
 }
 
 datasource db {
@@ -20,8 +19,8 @@ model User {
   passwordHash String
   service      String
 
-  Role     Role[]
-  Board    Board[]
+  Roles     Role[]
+  Boards    Board[]
   Tickets  Ticket[]
   Products Product[]
   Status   Status[]
@@ -37,7 +36,7 @@ model Role {
   updatedAt DateTime @updatedAt
   roleType  String   @unique @default("")
 
-  Board Board[]
+  Boards Board[]
   @@map("Roles")
 }
 
@@ -62,7 +61,7 @@ model Product {
   updatedAt DateTime @updatedAt
   device    String   @unique @default("")
 
-  Ticket Ticket[]
+  Tickets Ticket[]
   @@map("Products")
 }
 
@@ -90,7 +89,7 @@ model Status {
   updatedAt    DateTime @updatedAt
   type         String   @unique @default("")
   
-  Ticket       Ticket[]
+  Tickets       Ticket[]
 }
 
 model Note {

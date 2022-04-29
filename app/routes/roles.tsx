@@ -1,7 +1,7 @@
 import type { LoaderFunction } from 'remix';
-import type { Role } from '~/api/roles';
+import type { Role } from '@prisma/client';
 import { Outlet, useLoaderData, Link, useCatch } from 'remix';
-import { getRoles } from '~/api/roles';
+import { getRoles } from '~/utils/roles.server';
 import { MdMiscellaneousServices } from 'react-icons/md';
 import { FaTools } from 'react-icons/fa';
 
@@ -12,7 +12,7 @@ export const loader: LoaderFunction = async () => {
 /* TODO: change the Link to='/boards when Model Board created with authorId referred link */
 /* TODO: Add a pagination to role list  */
 /* TODO: Voir si j'ajoute le user comme dans products  */
-// TODO: Add a search field to product list
+// TODO: Add a search field to role list
 
 export default function RolesRoute() {
 	const roles = useLoaderData<Role[]>();

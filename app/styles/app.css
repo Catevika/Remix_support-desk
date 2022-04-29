@@ -43,10 +43,11 @@ a:hover {
 	color: var(--hover);
 }
 
-p {
+p,
+li {
 	font-size: 1.2rem;
 	line-height: 1.2;
-	margin: 40px;
+	margin: 20px;
 }
 
 ul {
@@ -54,10 +55,10 @@ ul {
 	margin: 0 auto;
 }
 
-li {
+/* li {
 	line-height: 2.2;
 	margin-left: 40px;
-}
+} */
 
 span {
 	color: var(--hover);
@@ -75,6 +76,11 @@ em {
 	top: 0;
 	left: 0;
 	z-index: -1;
+}
+
+.border-up {
+	padding-top: 40px;
+	border-top: 1px solid var(--light);
 }
 
 .btn {
@@ -129,6 +135,10 @@ em {
 	justify-content: center;
 	align-items: center;
 	z-index: 1;
+}
+
+.error-danger {
+	color: var(--danger);
 }
 
 .form-btn {
@@ -222,7 +232,7 @@ em {
 }
 
 .nav {
-	width: 95%;
+	width: 50%;
 	font-size: 1.5rem;
 	margin: 5% auto;
 	padding: 1.5em;
@@ -239,6 +249,45 @@ em {
 
 .nav-links + .nav-links {
 	margin-top: 20px;
+}
+
+.status {
+	color: var(--light);
+	width: 100px;
+	padding: 0 20px;
+	justify-self: center;
+	border-radius: 5px;
+	font-size: 1rem;
+	text-align: center;
+}
+
+.status-New {
+	background-color: darkred;
+}
+
+.status-Open {
+	background-color: orange;
+}
+
+.status-Assigned {
+	background-color: steelblue;
+}
+
+.status-Note_sent {
+	background-color: springgreen;
+}
+
+.status-Product_missing {
+	background-color: teal;
+}
+
+.status-In-Progress {
+	background-color: var(--hover);
+}
+
+.status-Closed {
+	background-color: green;
+	color: #fff;
 }
 
 .uppercase {

@@ -11,10 +11,8 @@ import {
 import { db } from '~/utils/db.server';
 import { getUser } from '~/utils/session.server';
 import UserDisplay from '~/components/UserDisplay';
-import { User } from '~/api/users';
 import { FaTools } from 'react-icons/fa';
 
-// TODO: See if possible cascading DELETE to connections Role, Ticket, Notes, etc when from Employee or Admin or Tech
 // TODO: Change link back to Board Access
 
 export const meta: MetaFunction = ({
@@ -29,13 +27,13 @@ export const meta: MetaFunction = ({
 		};
 	}
 	return {
-		title: `${data.user.username}`,
-		description: `Here ist the profile of "${data.user.username}"`
+		title: `${data?.user?.username}`,
+		description: `Here ist your profile "${data?.user?.username}"`
 	};
 };
 
 type LoaderData = {
-	user: User;
+	user: Awaited<ReturnType<typeof getUser>>;
 	isOwner: boolean;
 	canDelete: boolean;
 };
@@ -129,14 +127,19 @@ export function CatchBoundary() {
 export function ErrorBoundary({ error }: { error: Error }) {
 	const { userId } = useParams();
 	return (
-		<div className='error-container'>
+		<div className='error-container' style={{ fontSize: '1.5rem' }}>
 			<div className='form-container form-content'>
-				There was an error loading the user by the id:{' '}
 				<p>
-					{' '}
-					<span>{`${userId}.`}</span>
+					To <span className='error-danger'>Delete your Account</span>, please
+					send a{' '}
+					<Link to={`/tickets/${userId}`}>
+						<span>ticket</span>
+					</Link>{' '}
+					to your Support Desk.
 				</p>
-				<p>Sorry.</p>
+				<Link to={`/users/${userId}`}>
+					<button className='btn form-btn'>Back to Profile</button>
+				</Link>
 			</div>
 		</div>
 	);

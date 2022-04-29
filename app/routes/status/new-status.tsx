@@ -1,11 +1,13 @@
+import type { LoaderFunction, ActionFunction } from 'remix';
 import {
+	Form,
+	Link,
 	json,
-	LoaderFunction,
-	ActionFunction,
+	useLoaderData,
+	useActionData,
 	redirect,
 	useCatch
 } from 'remix';
-import { Form, Link, useLoaderData, useActionData } from 'remix';
 
 import { getUser, requireUserId } from '~/utils/session.server';
 import { db } from '~/utils/db.server';
@@ -92,16 +94,10 @@ export default function NewStatusRoute() {
 			<main className='form-container'>
 				<div className='form-content'>
 					<Form reloadDocument method='post' className='form'>
-						<div className='form-group'>
-							<label htmlFor='username'>New Status added by:</label>
-							<input
-								type='text'
-								name='username'
-								value={data?.user?.username}
-								disabled
-								className='capitalize'
-							/>
-						</div>
+						<p className='list'>
+							New Status by&nbsp;
+							<span className='capitalize'>{data?.user?.username}</span>
+						</p>
 						<div className='form-group'>
 							<label htmlFor='type'>
 								New Status:{' '}

@@ -47,25 +47,33 @@ export default function Employee() {
 				</p>
 			</main>
 			{data.user ? (
-				<nav className='nav container'>
-					<Link
-						to='/tickets/new-ticket'
-						className='btn btn-reverse btn-block nav-links'
-					>
-						<FaQuestionCircle className='icon-size icon-space' />
-						&nbsp;Create New Ticket
-					</Link>
-					<Link to='/tickets' className='btn btn-block nav-links'>
-						<FaTicketAlt className='icon-size icon-space' />
-						&nbsp;View my Tickets
-					</Link>
-					<Link
-						to={`/users/${data.user.id}`}
-						className='btn btn-block nav-links'
-					>
-						<CgProfile className='icon-size icon-space' />
-						&nbsp;View my Profile
-					</Link>
+				<nav className='nav'>
+					<ul>
+						<li>
+							<Link
+								to='/tickets/new-ticket'
+								className='btn btn-reverse btn-block nav-links'
+							>
+								<FaQuestionCircle className='icon-size icon-space' />
+								&nbsp;Create New Ticket
+							</Link>
+						</li>
+						<li>
+							<Link to='/tickets' className='btn btn-block nav-links'>
+								<FaTicketAlt className='icon-size icon-space' />
+								&nbsp;View my Tickets
+							</Link>
+						</li>
+						<li>
+							<Link
+								to={`/users/${data.user.id}`}
+								className='btn btn-block nav-links'
+							>
+								<CgProfile className='icon-size icon-space' />
+								&nbsp;View my Profile
+							</Link>
+						</li>
+					</ul>
 				</nav>
 			) : null}
 		</>

@@ -1,7 +1,7 @@
 import type { LoaderFunction } from 'remix';
-import type { Ticket } from '~/api/tickets';
+import type { Ticket } from '@prisma/client';
 import { Outlet, useLoaderData, Link, useCatch } from 'remix';
-import { getTickets } from '~/api/tickets';
+import { getTickets } from '~/utils/tickets.server';
 import { MdMiscellaneousServices } from 'react-icons/md';
 import { FaTools } from 'react-icons/fa';
 
