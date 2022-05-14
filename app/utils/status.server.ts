@@ -1,6 +1,5 @@
-import { Ticket } from "@prisma/client";
+import type { Ticket } from "@prisma/client";
 import { db } from "~/utils/db.server";
-import { json } from "remix";
 
 export type Status = { technicianId: string; statusId: string, createdAt: Date, updatedAt: Date; type: string; Tickets: Ticket[]; };
 
@@ -10,5 +9,5 @@ export async function getStatuses() {
     orderBy: { type: 'asc' }
   });
 
-  return json(statuses);
+  return statuses;
 }

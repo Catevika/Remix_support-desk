@@ -163,7 +163,7 @@ export default function Register() {
 							/>
 							{actionData?.fieldErrors?.username ? (
 								<p
-									className='form-validation-error'
+									className='error-danger'
 									role='alert'
 									id='username-error'
 								>
@@ -186,7 +186,7 @@ export default function Register() {
 							/>
 							{actionData?.fieldErrors?.email ? (
 								<p
-									className='form-validation-error'
+									className='error-danger'
 									role='alert'
 									id='email-error'
 								>
@@ -211,7 +211,7 @@ export default function Register() {
 							/>
 							{actionData?.fieldErrors?.password ? (
 								<p
-									className='form-validation-error'
+									className='error-danger'
 									role='alert'
 									id='password-error'
 								>
@@ -221,7 +221,7 @@ export default function Register() {
 						</div>
 						<div id='form-error-message'>
 							{actionData?.formError ? (
-								<p className='form-validation-error' role='alert'>
+								<p className='error-danger' role='alert'>
 									{actionData.formError}
 								</p>
 							) : null}
@@ -258,7 +258,7 @@ export default function Register() {
 							)}
 							{actionData?.fieldErrors?.service ? (
 								<p
-									className='form-validation-error'
+									className='error-danger'
 									role='alert'
 									id='service-error'
 								>

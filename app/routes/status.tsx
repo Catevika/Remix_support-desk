@@ -59,7 +59,7 @@ export function CatchBoundary() {
 			<div className='error-container'>
 				<div className='form-container form-content'>
 					<p>You must be logged in to create a status.</p>
-					<Link to='/login?redirectTo=/roles/new-role'>
+					<Link to='/login?redirectTo=/sratus/new-status'>
 						<button className='btn form-btn'>Login</button>
 					</Link>
 				</div>

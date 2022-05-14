@@ -81,8 +81,6 @@ export const action: ActionFunction = async ({ request }) => {
 	return createUserSession(user.id, redirectTo);
 };
 
-/* TODO: Remplacer Service par un combobox quand model Service created */
-
 export default function Login() {
 	const actionData = useActionData<ActionData>();
 	const [searchParams] = useSearchParams();
@@ -120,7 +118,7 @@ export default function Login() {
 							/>
 							{actionData?.fieldErrors?.email ? (
 								<p
-									className='form-validation-error'
+									className='error-danger'
 									role='alert'
 									id='email-error'
 								>
@@ -145,7 +143,7 @@ export default function Login() {
 							/>
 							{actionData?.fieldErrors?.password ? (
 								<p
-									className='form-validation-error'
+									className='error-danger'
 									role='alert'
 									id='password-error'
 								>
@@ -155,7 +153,7 @@ export default function Login() {
 						</div>
 						<div id='form-error-message'>
 							{actionData?.formError ? (
-								<p className='form-validation-error' role='alert'>
+								<p className='error-danger' role='alert'>
 									{actionData.formError}
 								</p>
 							) : null}

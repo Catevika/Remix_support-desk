@@ -34,7 +34,7 @@ export default function TicketsRoute() {
 								{tickets.map((ticket) => (
 									<li key={ticket.ticketId}>
 										<Link to={ticket.ticketId} prefetch='intent'>
-											{ticket.description}
+											{ticket.ticketId} - {ticket.description}
 										</Link>
 									</li>
 								))}
@@ -59,8 +59,8 @@ export function CatchBoundary() {
 		return (
 			<div className='error-container'>
 				<div className='form-container form-content'>
-					<p>You must be logged in to create a role.</p>
-					<Link to='/login?redirectTo=/roles/new-role'>
+					<p>You must be logged in to create a ticket.</p>
+					<Link to='/login?redirectTo=/tickets/new-ticket'>
 						<button className='btn form-btn'>Login</button>
 					</Link>
 				</div>
@@ -70,7 +70,7 @@ export function CatchBoundary() {
 	throw new Error(`Unexpected caught response with status: ${caught.status}`);
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
+export function ErrorBoundary({ error }: { error: Error; }) {
 	console.error(error);
 	return (
 		<div className='error-container'>

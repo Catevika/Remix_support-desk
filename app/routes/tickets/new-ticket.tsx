@@ -1,11 +1,5 @@
-// export default function newTicketRoute() {
-// 	return <div>New Ticket</div>;
-// }
-
 import type { LoaderFunction, ActionFunction } from 'remix';
 import type { Product, Status } from '@prisma/client';
-import { getProducts } from '~/utils/products.server';
-import { getStatuses } from '~/utils/status.server';
 
 import {
 	useLoaderData,
@@ -13,18 +7,15 @@ import {
 	json,
 	Link,
 	useFetcher,
-	// useFetchers,
-	useSearchParams,
 	useTransition,
-	Form,
 	redirect,
 	useCatch
 } from 'remix';
 
 import { getUser, requireUserId } from '~/utils/session.server';
 import { db } from '~/utils/db.server';
-
-// TODO: Insert Meta to describe what's going on in this file through the page tab
+import { getProducts } from '~/utils/products.server';
+import { getStatuses } from '~/utils/status.server';
 
 type LoaderData = {
 	user: Awaited<ReturnType<typeof getUser>>;
@@ -44,24 +35,25 @@ export const loader: LoaderFunction = async ({ request }) => {
 		products,
 		statuses
 	};
-	return json(data);
+
+	return data;
 };
 
-function validateStatus(type: unknown) {
-	if (type === '-- Please select a status --') {
+function validateStatus(status: unknown) {
+	if (!status || typeof status !== 'string') {
 		return 'A status must be selected';
 	}
 }
 
 function validateProduct(product: unknown) {
-	if (product === '-- Please select a product --') {
+	if (!product || typeof product !== 'string') {
 		return 'A product must be selected';
 	}
 }
 
 function validateDescription(description: unknown) {
 	if (typeof description !== 'string' || description.length < 10) {
-		return 'descriptions must be at least 10 characters long';
+		return 'Description must be at least 10 characters long';
 	}
 }
 
@@ -70,49 +62,53 @@ type ActionData = {
 	fieldErrors?: {
 		product: string | undefined;
 		description: string | undefined;
-		type: string | undefined;
+		status: string | undefined;
 	};
 	fields?: {
 		product: string;
 		description: string;
-		type: string;
+		status: string;
 	};
 };
 
 const badRequest = (data: ActionData) => json(data, { status: 400 });
 
 export const action: ActionFunction = async ({ request }) => {
-	const userId = await requireUserId(request);
-
 	const form = await request.formData();
 
 	let { ...values } = Object.fromEntries(form);
-	const { username, email, product, description, type } = values;
+	const { product, description, status } = values;
 
-	const redirectTo = form.get('redirectTo') || '/';
-	if (!username && !email && !product && !description && !type) {
+	if (!product && !description && !status) {
 		return null;
-	} else if (
-		typeof username !== 'string' ||
-		typeof email !== 'string' ||
-		typeof product !== 'string' ||
-		typeof description !== 'string' ||
-		typeof type !== 'string' ||
-		typeof redirectTo !== 'string'
-	) {
-		return badRequest({ formError: 'Form not submitted correctly.' });
+	} else if (typeof status !== 'string') {
+		return badRequest({ formError: 'A status must be selected' });
+	} else if (typeof product !== 'string') {
+		return badRequest({ formError: 'A product must be selected' });
+	} else if (typeof description !== 'string' || description.length < 10) {
+		return badRequest({ formError: 'Descriptions must be at least 10 characters long' });
 	}
+
+	// } else if (
+	// 	typeof product !== 'string' ||
+	// 	typeof description !== 'string' ||
+	// 	typeof status !== 'string'
+	// ) {
+	// 	return badRequest({ formError: 'Form not submitted correctly.' });
+	// }
 
 	const fieldErrors = {
 		product: validateProduct(product),
 		description: validateDescription(description),
-		type: validateStatus(type)
+		status: validateStatus(status)
 	};
 
-	const fields = { product, description, type };
+	const fields = { product, description, status };
 	if (Object.values(fieldErrors).some(Boolean)) {
 		return badRequest({ fieldErrors, fields });
 	}
+
+	const userId = await requireUserId(request);
 
 	const ticketProduct = await db.product.findUnique({
 		where: { device: product }
@@ -124,61 +120,60 @@ export const action: ActionFunction = async ({ request }) => {
 
 	const ticketProductId = ticketProduct.productId;
 
-	const ticketStatus = await db.status.findUnique({ where: { type: type } });
+	const ticketStatus = await db.status.findUnique({ where: { type: status } });
 
 	if (!ticketStatus) {
 		return badRequest({ formError: 'Status not found' });
 	}
 
-	const ticketStatusId = ticketStatus.type;
+	const ticketStatusId = ticketStatus.statusId;
 
 	await db.ticket.create({
 		data: {
-			description,
 			authorId: userId,
 			ticketProductId,
-			ticketStatusId
+			ticketStatusId,
+			description
 		}
 	});
-	return redirect(`/new-ticket`);
+	return redirect(`/tickets/new-ticket`);
 };
 
 export default function NewTicketRoute() {
-	const user = useLoaderData().user;
-	const products: Product[] = useLoaderData().products;
-	const statuses: Status[] = useLoaderData().statuses;
+	const data = useLoaderData();
+	const user = data.user;
+	const products: Product[] = data.products;
+	const statuses: Status[] = data.statuses;
 
 	const actionData = useActionData<ActionData>();
 
 	const fetcher = useFetcher();
-	// const fetchers = useFetchers();
-	const [searchParams] = useSearchParams();
 	const transition = useTransition();
 
-	function handleSelect(selectedValue: string) {
-		fetcher.submit(
-			{ selected: selectedValue },
-			{ method: 'post', action: '/new-ticket' }
-		);
+	function handleSelectStatus(selectedStatus: string) {
+		fetcher.submission?.formData.get('status') === selectedStatus;
 	}
+
+	function handleSelectProduct(selectedProduct: string) {
+		fetcher.submission?.formData.get('product') === selectedProduct;
+	}
+
 
 	return (
 		<>
 			<main className='form-container'>
 				<div className='form-content'>
-					<Form>
-						<div className='form-group'>
-							<p>
-								New Ticket from:
-								<span className='capitalize'>&nbsp;{user?.username}</span>
-							</p>
-							<p>
-								Email:
-								<span>&nbsp;{user?.email}</span>
-							</p>
-						</div>
-					</Form>
-					<fetcher.Form reloadDocument method='post' className='form'>
+					<div className='form-group'>
+						<p>
+							New Ticket from:
+							<span className='capitalize'>&nbsp;{user?.username}</span>
+						</p>
+						<p>
+							Email:
+							<span>&nbsp;{user?.email}</span>
+						</p>
+					</div>
+					<fetcher.Form /* reloadDocument */ method='post' className='form'>
 						<div className='form-group'>
 							<label htmlFor='status'>Status: </label>
 							{statuses.length ? (
@@ -186,8 +181,9 @@ export default function NewTicketRoute() {
 									name='status'
 									id='status'
 									defaultValue='-- Please select a status --'
-									onSelect={(e) => handleSelect}
+									onSelect={(e) => handleSelectStatus}
 									className='form-select'
+									autoFocus
 								>
 									<option
 										defaultValue='-- Please select a status --'
@@ -210,13 +206,15 @@ export default function NewTicketRoute() {
 								<p className='error-danger'>'No status available'</p>
 							)}
 						</div>
-						{actionData?.fieldErrors?.type ? (
-							<p className='form-validation-error' role='alert' id='type-error'>
-								{actionData.fieldErrors.type}
+						{actionData?.fieldErrors?.status ? (
+							<p
+								className='error-danger'
+								role='alert'
+								id='status-error'
+							>
+								{actionData.fieldErrors.status}
 							</p>
 						) : null}
-					</fetcher.Form>
-					<fetcher.Form reloadDocument method='post' className='form'>
 						<div className='form-group'>
 							<label htmlFor='product'>Product: </label>
 							{products.length ? (
@@ -224,9 +222,8 @@ export default function NewTicketRoute() {
 									name='product'
 									id='product'
 									defaultValue='-- Please select a product --'
-									onSelect={(e) => handleSelect}
+									onSelect={(e) => handleSelectProduct}
 									className='form-select'
-									autoFocus
 								>
 									<option
 										defaultValue='-- Please select a product --'
@@ -251,20 +248,13 @@ export default function NewTicketRoute() {
 						</div>
 						{actionData?.fieldErrors?.product ? (
 							<p
-								className='form-validation-error'
+								className='error-danger'
 								role='alert'
 								id='product-error'
 							>
 								{actionData.fieldErrors.product}
 							</p>
 						) : null}
-					</fetcher.Form>
-					<Form reloadDocument method='post' className='form'>
-						<input
-							type='hidden'
-							name='redirectTo'
-							defaultValue={searchParams.get('redirectTo') ?? undefined}
-						/>
 						<div className='form-group'>
 							<label htmlFor='description'>Issue Description: </label>
 							<textarea
@@ -273,17 +263,17 @@ export default function NewTicketRoute() {
 								className='form-textarea'
 							/>
 						</div>
-
 						{transition.submission ? (
-							<button type='submit' className='btn form-btn' disabled>
+							<button className='btn form-btn' disabled>
 								Sending your ticket..
 							</button>
 						) : (
 							<button type='submit' className='btn form-btn'>
 								Send
 							</button>
+
 						)}
-					</Form>
+					</fetcher.Form>
 				</div>
 			</main>
 		</>
@@ -297,8 +287,8 @@ export function CatchBoundary() {
 		return (
 			<div className='error-container'>
 				<div className='form-container form-content'>
-					<p>You must be logged in to create a role.</p>
-					<Link to='/login?redirectTo=/roles/new-role'>
+					<p>You must be logged in to create a ticket.</p>
+					<Link to='/login?redirectTo=/tickets/new-ticket'>
 						<button className='btn form-btn'>Login</button>
 					</Link>
 				</div>
@@ -308,7 +298,7 @@ export function CatchBoundary() {
 	throw new Error(`Unexpected caught response with status: ${caught.status}`);
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
+export function ErrorBoundary({ error }: { error: Error; }) {
 	console.error(error);
 	return (
 		<div className='error-container'>

@@ -15,8 +15,7 @@ export const meta: MetaFunction = ({
 		};
 	} else {
 		return {
-			title: `${data?.user?.username}`,
-			description: `${data?.user?.username}'s profile`
+			title: `${data?.user?.username}'s profile`
 		};
 	}
 };

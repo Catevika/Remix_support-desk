@@ -111,7 +111,7 @@ export default function NewRoleRoute() {
 							</label>
 							{actionData?.fieldErrors?.roleType ? (
 								<p
-									className='form-validation-error'
+									className='error-danger'
 									role='alert'
 									id='name-error'
 								>
@@ -121,7 +121,7 @@ export default function NewRoleRoute() {
 						</div>
 						<div>
 							{actionData?.formError ? (
-								<p className='form-validation-error' role='alert'>
+								<p className='error-danger' role='alert'>
 									{actionData.formError}
 								</p>
 							) : null}
@@ -154,7 +154,7 @@ export function CatchBoundary() {
 	throw new Error(`Unexpected caught response with status: ${caught.status}`);
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
+export function ErrorBoundary({ error }: { error: Error; }) {
 	console.error(error);
 	return (
 		<div className='error-container'>
