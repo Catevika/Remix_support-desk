@@ -11,8 +11,6 @@ import { db } from '~/utils/db.server';
 import { getUserId, requireUserId } from '~/utils/session.server';
 import DeleteButton from '~/components/DeleteButton';
 
-// TODO: Insert Meta to describe what's going on in this file through the page tab
-
 export const meta: MetaFunction = ({
 	data
 }: {
@@ -162,7 +160,7 @@ export function CatchBoundary() {
 	}
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
+export function ErrorBoundary({ error }: { error: Error; }) {
 	const { roleId } = useParams();
 	return (
 		<div className='error-container'>

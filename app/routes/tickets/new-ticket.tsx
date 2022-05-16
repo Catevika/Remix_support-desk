@@ -263,6 +263,11 @@ export default function NewTicketRoute() {
 								className='form-textarea'
 							/>
 						</div>
+						{actionData?.formError ? (
+							<p className='error-danger' role='alert'>
+								{actionData.formError}
+							</p>
+						) : null}
 						{transition.submission ? (
 							<button className='btn form-btn' disabled>
 								Sending your ticket..
