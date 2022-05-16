@@ -79,23 +79,13 @@ export const action: ActionFunction = async ({ request }) => {
 	let { ...values } = Object.fromEntries(form);
 	const { product, description, status } = values;
 
-	if (!product && !description && !status) {
-		return null;
-	} else if (typeof status !== 'string') {
+	if (typeof status !== 'string') {
 		return badRequest({ formError: 'A status must be selected' });
 	} else if (typeof product !== 'string') {
-		return badRequest({ formError: 'A product must be selected' });
+		return badRequest({ formError: 'A status and a product must be selected' });
 	} else if (typeof description !== 'string' || description.length < 10) {
-		return badRequest({ formError: 'Descriptions must be at least 10 characters long' });
+		return badRequest({ formError: 'A status and a product must be selected, and the description of the issue must be at least 10 characters long' });
 	}
-
-	// } else if (
-	// 	typeof product !== 'string' ||
-	// 	typeof description !== 'string' ||
-	// 	typeof status !== 'string'
-	// ) {
-	// 	return badRequest({ formError: 'Form not submitted correctly.' });
-	// }
 
 	const fieldErrors = {
 		product: validateProduct(product),
@@ -173,7 +163,7 @@ export default function NewTicketRoute() {
 							<span>&nbsp;{user?.email}</span>
 						</p>
 					</div>
-					<fetcher.Form /* reloadDocument */ method='post' className='form'>
+					<fetcher.Form reloadDocument method='post' className='form'>
 						<div className='form-group'>
 							<label htmlFor='status'>Status: </label>
 							{statuses.length ? (
@@ -206,7 +196,7 @@ export default function NewTicketRoute() {
 								<p className='error-danger'>'No status available'</p>
 							)}
 						</div>
-						{actionData?.fieldErrors?.status ? (
+						{/* {actionData?.fieldErrors?.status ? (
 							<p
 								className='error-danger'
 								role='alert'
@@ -214,7 +204,7 @@ export default function NewTicketRoute() {
 							>
 								{actionData.fieldErrors.status}
 							</p>
-						) : null}
+						) : null} */}
 						<div className='form-group'>
 							<label htmlFor='product'>Product: </label>
 							{products.length ? (
@@ -246,7 +236,7 @@ export default function NewTicketRoute() {
 								<p className='error-danger'>'No product available'</p>
 							)}
 						</div>
-						{actionData?.fieldErrors?.product ? (
+						{/* {actionData?.fieldErrors?.product ? (
 							<p
 								className='error-danger'
 								role='alert'
@@ -254,7 +244,7 @@ export default function NewTicketRoute() {
 							>
 								{actionData.fieldErrors.product}
 							</p>
-						) : null}
+						) : null} */}
 						<div className='form-group'>
 							<label htmlFor='description'>Issue Description: </label>
 							<textarea

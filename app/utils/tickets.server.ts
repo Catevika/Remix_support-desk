@@ -7,7 +7,7 @@ export type Ticket = { authorId: string, ticketProductId: string; ticketStatusId
 export async function getTickets() {
   const tickets = await db.ticket.findMany({
     select: { authorId: true, ticketProductId: true, ticketStatusId: true, ticketId: true, createdAt: true, updatedAt: true, description: true, Notes: true },
-    orderBy: { description: 'asc' }
+    orderBy: { updatedAt: 'desc' }
   });
 
   return json(tickets);
