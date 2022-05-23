@@ -1,4 +1,4 @@
-import type { LoaderFunction, ActionFunction } from 'remix';
+import type { MetaFunction, LoaderFunction, ActionFunction } from 'remix';
 import {
 	Form,
 	Link,
@@ -12,7 +12,12 @@ import {
 import { getUser, requireUserId } from '~/utils/session.server';
 import { db } from '~/utils/db.server';
 
-// TODO: Insert Meta to describe what's going on in this file through the page tab
+export const meta: MetaFunction = () => {
+	return {
+		title: 'Remix Support-Desk | Status',
+		description: 'Create a new status!'
+	};
+};
 
 type LoaderData = {
 	user: Awaited<ReturnType<typeof getUser>>;
@@ -95,7 +100,7 @@ export default function NewStatusRoute() {
 				<div className='form-content'>
 					<Form reloadDocument method='post' className='form'>
 						<p className='list'>
-							New Status by&nbsp;
+							New Status from&nbsp;
 							<span className='capitalize'>{data?.user?.username}</span>
 						</p>
 						<div className='form-group'>

@@ -1,4 +1,4 @@
-import type { LoaderFunction, ActionFunction } from 'remix';
+import type { MetaFunction, LoaderFunction, ActionFunction } from 'remix';
 import type { Product, Status } from '@prisma/client';
 
 import {
@@ -7,7 +7,6 @@ import {
 	json,
 	Link,
 	useFetcher,
-	useTransition,
 	redirect,
 	useCatch
 } from 'remix';
@@ -16,6 +15,13 @@ import { getUser, requireUserId } from '~/utils/session.server';
 import { db } from '~/utils/db.server';
 import { getProducts } from '~/utils/products.server';
 import { getStatuses } from '~/utils/status.server';
+
+export const meta: MetaFunction = () => {
+	return {
+		title: 'Remix Support-Desk | Ticket',
+		description: 'Create a new ticket!'
+	};
+};
 
 type LoaderData = {
 	user: Awaited<ReturnType<typeof getUser>>;
@@ -39,6 +45,12 @@ export const loader: LoaderFunction = async ({ request }) => {
 	return data;
 };
 
+function validateTitle(title: unknown) {
+	if (!title || typeof title !== 'string' || title.length < 3) {
+		return 'The title must be a string of at least 3 characters long.';
+	}
+}
+
 function validateStatus(status: unknown) {
 	if (!status || typeof status !== 'string') {
 		return 'A status must be selected';
@@ -53,21 +65,23 @@ function validateProduct(product: unknown) {
 
 function validateDescription(description: unknown) {
 	if (typeof description !== 'string' || description.length < 10) {
-		return 'Description must be at least 10 characters long';
+		return 'The description must be at least 10 characters long';
 	}
 }
 
 type ActionData = {
 	formError?: string;
 	fieldErrors?: {
+		title: string | undefined;
+		status: string | undefined;
 		product: string | undefined;
 		description: string | undefined;
-		status: string | undefined;
 	};
 	fields?: {
+		title: string;
+		status: string;
 		product: string;
 		description: string;
-		status: string;
 	};
 };
 
@@ -77,23 +91,32 @@ export const action: ActionFunction = async ({ request }) => {
 	const form = await request.formData();
 
 	let { ...values } = Object.fromEntries(form);
-	const { product, description, status } = values;
+	const { title, status, product, description } = values;
+
+	if (typeof title !== 'string' || title.length < 3) {
+		return badRequest({ formError: 'The title must be a string of at least 3 characters long.' });
+	}
 
 	if (typeof status !== 'string') {
-		return badRequest({ formError: 'A status must be selected' });
-	} else if (typeof product !== 'string') {
-		return badRequest({ formError: 'A status and a product must be selected' });
-	} else if (typeof description !== 'string' || description.length < 10) {
-		return badRequest({ formError: 'A status and a product must be selected, and the description of the issue must be at least 10 characters long' });
+		return badRequest({ formError: 'A status must be selected.' });
+	}
+
+	if (typeof product !== 'string') {
+		return badRequest({ formError: 'A product must be selected' });
+	}
+
+	if (typeof description !== 'string' || description.length < 10) {
+		return badRequest({ formError: 'The description of the issue must be a string of at least 10 characters long.' });
 	}
 
 	const fieldErrors = {
+		title: validateTitle(title),
+		status: validateStatus(status),
 		product: validateProduct(product),
 		description: validateDescription(description),
-		status: validateStatus(status)
 	};
 
-	const fields = { product, description, status };
+	const fields = { title, status, product, description };
 	if (Object.values(fieldErrors).some(Boolean)) {
 		return badRequest({ fieldErrors, fields });
 	}
@@ -123,6 +146,7 @@ export const action: ActionFunction = async ({ request }) => {
 			authorId: userId,
 			ticketProductId,
 			ticketStatusId,
+			title,
 			description
 		}
 	});
@@ -132,22 +156,20 @@ export const action: ActionFunction = async ({ request }) => {
 export default function NewTicketRoute() {
 	const data = useLoaderData();
 	const user = data.user;
-	const products: Product[] = data.products;
 	const statuses: Status[] = data.statuses;
+	const products: Product[] = data.products;
 
 	const actionData = useActionData<ActionData>();
 
 	const fetcher = useFetcher();
-	const transition = useTransition();
 
 	function handleSelectStatus(selectedStatus: string) {
-		fetcher.submission?.formData.get('status') === selectedStatus;
+		return fetcher.submission?.formData.get('status') === selectedStatus;
 	}
 
 	function handleSelectProduct(selectedProduct: string) {
-		fetcher.submission?.formData.get('product') === selectedProduct;
+		return fetcher.submission?.formData.get('product') === selectedProduct;
 	}
-
 
 	return (
 		<>
@@ -164,6 +186,13 @@ export default function NewTicketRoute() {
 						</p>
 					</div>
 					<fetcher.Form reloadDocument method='post' className='form'>
+						<div className='form-group'>
+							<label htmlFor="title">
+								Title:{''}
+								<input type='text' defaultValue={actionData?.fields?.title} name='title' aria-invalid={Boolean(actionData?.fieldErrors?.title)} aria-errormessage={actionData?.fieldErrors?.title ? 'title-error' : undefined} />
+							</label>
+
+						</div>
 						<div className='form-group'>
 							<label htmlFor='status'>Status: </label>
 							{statuses.length ? (
@@ -258,16 +287,9 @@ export default function NewTicketRoute() {
 								{actionData.formError}
 							</p>
 						) : null}
-						{transition.submission ? (
-							<button className='btn form-btn' disabled>
-								Sending your ticket..
-							</button>
-						) : (
-							<button type='submit' className='btn form-btn'>
-								Send
-							</button>
-
-						)}
+						<button type='submit' className='btn form-btn'>
+							Send
+						</button>
 					</fetcher.Form>
 				</div>
 			</main>

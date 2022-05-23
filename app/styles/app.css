@@ -123,6 +123,12 @@ em {
 	box-shadow: none;
 }
 
+.btn-center {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
 .capitalize {
 	text-transform: capitalize;
 }
@@ -139,6 +145,7 @@ em {
 
 .error-danger {
 	color: var(--danger);
+	font-size: 1rem;
 }
 
 .form-btn {
@@ -221,6 +228,15 @@ em {
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
+}
+
+.column-list-container {
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	width: 100%;
+	margin: 0 auto;
+	padding: 0 20px;
 }
 
 .links {

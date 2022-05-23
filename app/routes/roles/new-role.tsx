@@ -1,7 +1,10 @@
+import type {
+	MetaFunction,
+	LoaderFunction,
+	ActionFunction
+} from 'remix';
 import {
 	json,
-	LoaderFunction,
-	ActionFunction,
 	redirect,
 	useCatch
 } from 'remix';
@@ -10,7 +13,12 @@ import { Form, Link, useLoaderData, useActionData } from 'remix';
 import { getUser, requireUserId } from '~/utils/session.server';
 import { db } from '~/utils/db.server';
 
-// TODO: Insert Meta to describe what's going on in this file through the page tab
+export const meta: MetaFunction = () => {
+	return {
+		title: 'Remix Support-Desk | Role',
+		description: 'Create a new role!'
+	};
+};
 
 type LoaderData = {
 	user: Awaited<ReturnType<typeof getUser>>;
@@ -93,7 +101,7 @@ export default function NewRoleRoute() {
 				<div className='form-content'>
 					<Form reloadDocument method='post' className='form'>
 						<p className='list'>
-							New Role by&nbsp;
+							New Role from&nbsp;
 							<span className='capitalize'>{data?.user?.username}</span>
 						</p>
 						<div className='form-group'>

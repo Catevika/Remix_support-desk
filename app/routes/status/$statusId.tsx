@@ -11,6 +11,8 @@ import { db } from '~/utils/db.server';
 import { getUserId, requireUserId } from '~/utils/session.server';
 import DeleteButton from '~/components/DeleteButton';
 
+// TODO: Insérer le goTo Login ici
+
 export const meta: MetaFunction = ({
 	data
 }: {

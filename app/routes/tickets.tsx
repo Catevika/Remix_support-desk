@@ -9,13 +9,15 @@ export const loader: LoaderFunction = async () => {
 	return getTickets();
 };
 
+// TODO: Add status to the ticket title
+
 /* TODO: change the Link to='/boards when Model Board created with authorId referred link */
-/* TODO: Add a pagination to role list  */
-/* TODO: Voir si j'ajoute le user comme dans products  */
-// TODO: Add a search field to product list
+/* TODO: Add a pagination to ticket list  */
+// TODO: Add a search field to ticket list
 
 export default function TicketsRoute() {
 	const tickets = useLoaderData<Ticket[]>();
+
 	return (
 		<>
 			<header className='container header'>
@@ -33,9 +35,18 @@ export default function TicketsRoute() {
 							<ul>
 								{tickets.map((ticket) => (
 									<li key={ticket.ticketId}>
-										<Link to={ticket.ticketId} prefetch='intent'>
-											{ticket.ticketId} - {ticket.description}
-										</Link>
+										<>
+											<ul>
+												<li>Ticket Id:&nbsp;{ticket.ticketId}</li>
+												<li>
+													<Link to={ticket.ticketId} prefetch='intent'>
+														Title:&nbsp;<span>{ticket.title}</span>
+													</Link>
+												</li>
+												<li>Date:&nbsp;{new Date(ticket.createdAt).toLocaleString() !== new Date(ticket.updatedAt).toLocaleString() ? new Date(ticket.updatedAt).toLocaleString() : new Date(ticket.createdAt).toLocaleString()}</li>
+												<li><br /></li>
+											</ul>
+										</>
 									</li>
 								))}
 							</ul>

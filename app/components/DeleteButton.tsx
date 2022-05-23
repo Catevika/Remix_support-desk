@@ -10,11 +10,11 @@ export default function DeleteButton({
 	return (
 		<>
 			{isOwner ? (
-				<Form method='post'>
+				<Form method='post' >
 					<input type='hidden' name='_method' value='delete' />
 					<button
 						type='submit'
-						className='btn form-btn btn-danger'
+						className='btn form-btn btn-danger '
 						disabled={!canDelete}
 					>
 						Delete
