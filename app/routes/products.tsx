@@ -29,7 +29,7 @@ export default function ProductsRoute() {
 					<>
 						<div className='form-content'>
 							<MdOutlineDevicesOther className='icon-size icon-container' />
-							<p>Available products:</p>
+							<p>Available products:&nbsp;<span>{products.length}</span></p>
 							<ul>
 								{products.map((product) => (
 									<li key={product.productId}>
@@ -42,7 +42,7 @@ export default function ProductsRoute() {
 							</ul>
 						</div>
 					</>
-				) : null}
+				) : "No products available yet."}
 				<div>
 					<div>
 						<Outlet />
@@ -71,7 +71,7 @@ export function CatchBoundary() {
 	throw new Error(`Unexpected caught response with status: ${caught.status}`);
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
+export function ErrorBoundary({ error }: { error: Error; }) {
 	console.error(error);
 	return (
 		<div className='error-container'>

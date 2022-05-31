@@ -29,7 +29,7 @@ export default function RolesRoute() {
 					<>
 						<div className='form-content'>
 							<MdMiscellaneousServices className='icon-size icon-container' />
-							<p>Available roles:</p>
+							<p>Available roles:&nbsp;<span>{roles.length}</span></p>
 							<ul>
 								{roles.map((role) => (
 									<li key={role.roleId}>
@@ -41,7 +41,7 @@ export default function RolesRoute() {
 							</ul>
 						</div>
 					</>
-				) : null}
+				) : "No roles available yet."}
 				<div>
 					<div>
 						<Outlet />
@@ -70,7 +70,7 @@ export function CatchBoundary() {
 	throw new Error(`Unexpected caught response with status: ${caught.status}`);
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
+export function ErrorBoundary({ error }: { error: Error; }) {
 	console.error(error);
 	return (
 		<div className='error-container'>

@@ -21,7 +21,7 @@ export function TicketDisplay({
 			{ticket ? (
 				<ul className='main column-list-container'>
 					<li>
-						Ticket Id: {ticket.ticketId}&nbsp;
+						Ticket Id: <span>{ticket.ticketId}</span>&nbsp;
 						<span
 							className={
 								ticket.ticketStatusId
@@ -32,10 +32,10 @@ export function TicketDisplay({
 							{type}
 						</span></li>
 					<li>Title:&nbsp;<span>{ticket.title}</span></li>
-					<li>Product:&nbsp;{device}</li>
-					<li>Description of Issue:&nbsp;{ticket.description}</li>
-					<li>Date Submitted: {new Date(ticket.createdAt).toLocaleString()}</li>
-					<li>Date Updated: {new Date(ticket.updatedAt).toLocaleString()}</li>
+					<li>Product:&nbsp;<span>{device}</span></li>
+					<li>Description of Issue:&nbsp;<span>{ticket.description}</span></li>
+					<li>Date Submitted: <span>{new Date(ticket.createdAt).toLocaleString()}</span></li>
+					<li>Date Updated: <span>{new Date(ticket.updatedAt).toLocaleString()}</span></li>
 					{/* {ticket.status === 'Closed' || notes.length === 0 ? null : (
 						<h2>Notes</h2>
 					)} */}

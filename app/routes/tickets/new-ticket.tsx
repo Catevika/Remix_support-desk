@@ -16,6 +16,9 @@ import { db } from '~/utils/db.server';
 import { getProducts } from '~/utils/products.server';
 import { getStatuses } from '~/utils/status.server';
 
+// TODO: Voir comment gérer les fields errors sur des select
+// TODO: changer le style des errors pour qu'il y ait moins d'espace en dessous
+
 export const meta: MetaFunction = () => {
 	return {
 		title: 'Remix Support-Desk | Ticket',
@@ -93,7 +96,11 @@ export const action: ActionFunction = async ({ request }) => {
 	let { ...values } = Object.fromEntries(form);
 	const { title, status, product, description } = values;
 
-	if (typeof title !== 'string' || title.length < 3) {
+	function onlyNumbers(str: string) {
+		return /^[0-9]+$/.test(str);
+	}
+
+	if ((typeof title !== 'string') || onlyNumbers(title) === true || (typeof title === 'string' && title.length < 3)) {
 		return badRequest({ formError: 'The title must be a string of at least 3 characters long.' });
 	}
 
@@ -105,7 +112,7 @@ export const action: ActionFunction = async ({ request }) => {
 		return badRequest({ formError: 'A product must be selected' });
 	}
 
-	if (typeof description !== 'string' || description.length < 10) {
+	if ((typeof description !== 'string') || onlyNumbers(description) === true || (typeof title === 'string' && description.length < 10)) {
 		return badRequest({ formError: 'The description of the issue must be a string of at least 10 characters long.' });
 	}
 
@@ -175,23 +182,28 @@ export default function NewTicketRoute() {
 		<>
 			<main className='form-container'>
 				<div className='form-content'>
-					<div className='form-group'>
-						<p>
-							New Ticket from:
-							<span className='capitalize'>&nbsp;{user?.username}</span>
-						</p>
-						<p>
-							Email:
-							<span>&nbsp;{user?.email}</span>
-						</p>
-					</div>
+					<p className='list'>
+						New Ticket from:<span className='capitalize'>&nbsp;{user?.username}</span>
+					</p>
+					<p className='list'>
+						Email:
+						<span>&nbsp;{user?.email}</span>
+					</p>
 					<fetcher.Form reloadDocument method='post' className='form'>
-						<div className='form-group'>
+						<div>
 							<label htmlFor="title">
 								Title:{''}
-								<input type='text' defaultValue={actionData?.fields?.title} name='title' aria-invalid={Boolean(actionData?.fieldErrors?.title)} aria-errormessage={actionData?.fieldErrors?.title ? 'title-error' : undefined} />
+								<input type='text' defaultValue={actionData?.fields?.title} name='title' aria-invalid={Boolean(actionData?.fieldErrors?.title)} aria-errormessage={actionData?.fieldErrors?.title ? 'title-error' : undefined} autoFocus />
 							</label>
-
+							{actionData?.fieldErrors?.title ? (
+								<p
+									className='error-danger'
+									role='alert'
+									id='title-error'
+								>
+									{actionData.fieldErrors.title}
+								</p>
+							) : null}
 						</div>
 						<div className='form-group'>
 							<label htmlFor='status'>Status: </label>
@@ -202,7 +214,6 @@ export default function NewTicketRoute() {
 									defaultValue='-- Please select a status --'
 									onSelect={(e) => handleSelectStatus}
 									className='form-select'
-									autoFocus
 								>
 									<option
 										defaultValue='-- Please select a status --'
@@ -225,15 +236,6 @@ export default function NewTicketRoute() {
 								<p className='error-danger'>'No status available'</p>
 							)}
 						</div>
-						{/* {actionData?.fieldErrors?.status ? (
-							<p
-								className='error-danger'
-								role='alert'
-								id='status-error'
-							>
-								{actionData.fieldErrors.status}
-							</p>
-						) : null} */}
 						<div className='form-group'>
 							<label htmlFor='product'>Product: </label>
 							{products.length ? (
@@ -265,22 +267,28 @@ export default function NewTicketRoute() {
 								<p className='error-danger'>'No product available'</p>
 							)}
 						</div>
-						{/* {actionData?.fieldErrors?.product ? (
-							<p
-								className='error-danger'
-								role='alert'
-								id='product-error'
-							>
-								{actionData.fieldErrors.product}
-							</p>
-						) : null} */}
 						<div className='form-group'>
-							<label htmlFor='description'>Issue Description: </label>
-							<textarea
-								name='description'
-								id='description'
-								className='form-textarea'
-							/>
+							<label htmlFor='description'>Issue Description:
+								<textarea
+									defaultValue={actionData?.fields?.description}
+									name='description'
+									aria-invalid={Boolean(actionData?.fieldErrors?.description)}
+									aria-errormessage={actionData?.fieldErrors?.description
+										? 'description-error'
+										: undefined}
+									id='description'
+									className='form-textarea'
+								/>
+							</label>
+							{actionData?.fieldErrors?.description ? (
+								<p
+									className='error-danger'
+									role='alert'
+									id='description-error'
+								>
+									{actionData.fieldErrors.description}
+								</p>
+							) : null}
 						</div>
 						{actionData?.formError ? (
 							<p className='error-danger' role='alert'>

@@ -31,19 +31,19 @@ export default function TicketsRoute() {
 					<>
 						<div className='form-content'>
 							<MdMiscellaneousServices className='icon-size icon-container' />
-							<p>Available tickets:</p>
+							<p>Available tickets:&nbsp;<span>{tickets.length}</span></p>
 							<ul>
 								{tickets.map((ticket) => (
 									<li key={ticket.ticketId}>
 										<>
 											<ul>
-												<li>Ticket Id:&nbsp;{ticket.ticketId}</li>
-												<li>
+												<li className='list'>Ticket Id:&nbsp;<span>{ticket.ticketId}</span></li>
+												<li className='list border-up'>
 													<Link to={ticket.ticketId} prefetch='intent'>
 														Title:&nbsp;<span>{ticket.title}</span>
 													</Link>
 												</li>
-												<li>Date:&nbsp;{new Date(ticket.createdAt).toLocaleString() !== new Date(ticket.updatedAt).toLocaleString() ? new Date(ticket.updatedAt).toLocaleString() : new Date(ticket.createdAt).toLocaleString()}</li>
+												<li className='list'>Date:&nbsp;{new Date(ticket.createdAt).toLocaleString() !== new Date(ticket.updatedAt).toLocaleString() ? <span>{new Date(ticket.updatedAt).toLocaleString()}</span> : <span>{new Date(ticket.createdAt).toLocaleString()}</span>}</li>
 												<li><br /></li>
 											</ul>
 										</>
@@ -52,7 +52,7 @@ export default function TicketsRoute() {
 							</ul>
 						</div>
 					</>
-				) : null}
+				) : "No tickets available yet."}
 				<div>
 					<div>
 						<Outlet />
