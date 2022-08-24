@@ -1,0 +1,195 @@
+input {
+	font-family: inherit;
+	height: 2.5rem;
+	background-color: var(--input-dark);
+	border-radius: 0.5rem;
+	padding: 0 1.5em;
+	font-size: 1.1rem;
+	font-weight: 300;
+	color: var(--gold);
+	border: none;
+	box-shadow: 3px 3px 3px var(--input-dark-extra) inset,
+		-3px -3px 3px var(--input-dark-min) inset;
+	width: 100%;
+}
+
+input:-webkit-autofill {
+	-webkit-box-shadow: 0 0 0 30px var(--input-dark) inset !important;
+	-webkit-text-fill-color: var(--gold) !important;
+	border-radius: 0.5rem !important;
+	color-scheme: dark;
+}
+
+input:focus {
+	outline: 1px solid var(--gold);
+}
+
+.form {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.form-btn {
+	margin-top: 20px;
+}
+
+.form-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-content: center;
+	width: 75%;
+	z-index: 1;
+}
+
+.form-container-center {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+}
+
+@media screen and (max-width: 900px) {
+	.form-container {
+		width: 98%;
+	}
+
+	.form-container-center {
+		justify-content: flex-start;
+		width: 95vw;
+		margin: 0 auto;
+	}
+}
+
+.form-container-message {
+	height: auto;
+	width: auto;
+	margin: 0 auto;
+}
+
+.form-container-user {
+	width: 50vw;
+}
+
+@media screen and (max-width: 900px) {
+	.form-container-user {
+		width: 98%;
+	}
+}
+
+.form-container-admin {
+	margin: 0 auto;
+}
+
+.form-container-ticket {
+	margin-left: 20%;
+}
+
+.form-scroll::-webkit-scrollbar {
+	width: 0;
+	background: transparent;
+}
+
+@media screen and (max-width: 678px) {
+	.form-scroll {
+		margin: 0;
+	}
+}
+
+.form-content {
+	padding: 1em 1.5em 1em;
+	border: 2px solid rgba(255, 255, 255, 0.1);
+	border-radius: 0.5rem;
+	box-shadow: 5px 5px 15px var(--input-dark-extra),
+		-5px -5px 15px var(--input-dark-min);
+}
+
+.form-group + .form-group {
+	margin-top: 20px;
+}
+
+.form-logout {
+	margin: 0 20px;
+}
+
+.form-option-disabled {
+	color: var(--gold);
+}
+
+.form-option-disabled:active {
+	background-color: var(--dark);
+}
+
+.form-select {
+	width: 100%;
+	height: 2.5rem;
+	background-color: var(--input-dark);
+	border-radius: 0.5rem;
+	padding: 0 1.5em;
+	font-size: 1.1rem;
+	font-weight: 300;
+	color: var(--gold);
+	border: none;
+	box-shadow: 3px 3px 3px var(--input-dark-extra) inset,
+		-3px -3px 3px var(--input-dark-min) inset;
+}
+
+.form-select:focus-visible {
+	outline: 1px solid var(--gold);
+}
+
+.form-textarea {
+	width: 100%;
+	height: 5rem;
+	background-color: var(--input-dark);
+	border-radius: 0.5rem;
+	padding: 10px 20px;
+	font-family: 'Poppins', sans-serif;
+	font-weight: 300;
+	font-size: 1rem;
+	color: var(--gold);
+	border: none;
+	box-shadow: 3px 3px 3px var(--input-dark-extra) inset,
+		-3px -3px 3px var(--input-dark-min) inset;
+	resize: none;
+}
+
+.form-input-date {
+	height: 2.5rem;
+}
+
+.form-textarea:focus-visible {
+	outline: 1px solid var(--gold);
+}
+
+.form-textarea::-webkit-input-placeholder {
+	font-family: 'Poppins', sans-serif;
+	color: var(--light, 50%);
+}
+
+.form-textarea::-moz-placeholder {
+	font-family: 'Poppins', sans-serif;
+	color: var(--light, 50%);
+}
+
+.form-textarea:-ms-input-placeholder {
+	font-family: 'Poppins', sans-serif;
+	color: var(--light, 50%);
+}
+
+.form-textarea::-ms-input-placeholder {
+	font-family: 'Poppins', sans-serif;
+	color: var(--light, 50%);
+}
+
+.form-textarea::placeholder {
+	font-family: 'Poppins', sans-serif;
+	color: var(--light, 50%);
+}
+
+.form-textarea::-webkit-scrollbar {
+	width: 0;
+	background: transparent;
+}
