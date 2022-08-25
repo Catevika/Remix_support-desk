@@ -289,3 +289,14 @@ export default function Register() {
 		</>
 	);
 }
+
+export function ErrorBoundary({ error }: { error: Error }) {
+	console.error(error);
+	return (
+		<div className='error-container'>
+			<div className='form-container form-container-message form-content'>
+				Something unexpected went wrong. Sorry about that.
+			</div>
+		</div>
+	);
+}
