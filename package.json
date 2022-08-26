@@ -9,10 +9,10 @@
     "@prisma/client": "^4.2.1",
     "@reach/alert-dialog": "^0.17.0",
     "@reach/dialog": "^0.17.0",
-    "@remix-run/node": "^1.6.8",
-    "@remix-run/react": "^1.6.8",
-    "@remix-run/vercel": "^1.6.8",
-    "@vercel/node": "^2.5.10",
+    "@remix-run/node": "^1.7.0",
+    "@remix-run/react": "^1.7.0",
+    "@remix-run/vercel": "^1.7.0",
+    "@vercel/node": "^2.5.11",
     "bcryptjs": "^2.4.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -20,15 +20,15 @@
     "tiny-invariant": "^1.2.0"
   },
   "devDependencies": {
-    "@remix-run/dev": "^1.6.8",
-    "@remix-run/eslint-config": "^1.6.8",
-    "@remix-run/serve": "^1.6.8",
+    "@remix-run/dev": "^1.7.0",
+    "@remix-run/eslint-config": "^1.7.0",
+    "@remix-run/serve": "^1.7.0",
     "@types/bcryptjs": "^2.4.2",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "eslint": "^8.22.0",
     "prisma": "^4.2.1",
-    "typescript": "^4.7.4"
+    "typescript": "^4.8.2"
   },
   "engines": {
     "node": ">=14"
