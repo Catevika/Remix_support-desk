@@ -14,7 +14,7 @@ import {
 import { validateText } from '~/utils/functions';
 import { deleteNote, getNoteByNoteId } from '~/models/notes.server';
 import { prisma } from '~/utils/db.server';
-import Dialog from '@reach/dialog';
+import { Dialog } from '@reach/dialog';
 
 import styles from '@reach/dialog/styles.css';
 import stylesUrl from '~/styles/dialog.css';

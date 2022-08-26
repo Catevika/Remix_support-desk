@@ -23,7 +23,6 @@ export const links: LinksFunction = () => {
 };
 
 export const meta: MetaFunction = () => ({
-	charset: 'utf-8',
 	title: 'New Remix App',
 	viewport: 'width=device-width,initial-scale=1'
 });
@@ -65,7 +64,7 @@ export function CatchBoundary() {
 					</div>
 					<div className='container'>
 						<Link to='/'>
-							<button className='btn form-btn'>Back Home</button>
+							<button type='button' className='btn form-btn'>Back Home</button>
 						</Link>
 					</div>
 				</div>

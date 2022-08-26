@@ -1,4 +1,4 @@
-import Dialog from '@reach/dialog';
+import { Dialog } from '@reach/dialog';
 import type {
 	LoaderFunction,
 	ActionFunction,

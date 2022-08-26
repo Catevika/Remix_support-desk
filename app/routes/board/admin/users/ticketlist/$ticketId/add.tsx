@@ -1,4 +1,4 @@
-import Dialog from "@reach/dialog";
+import { Dialog } from "@reach/dialog";
 import type { ActionFunction, LinksFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData, useNavigate, useParams } from "@remix-run/react";
@@ -23,17 +23,17 @@ export let links: LinksFunction = () => {
 };
 
 type LoaderData = {
-	user: Awaited<ReturnType<typeof getUser>>;
-}
+  user: Awaited<ReturnType<typeof getUser>>;
+};
 
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await getUser(request);
 
   const data: LoaderData = {
-		user
-}
+    user
+  };
   return data;
-}
+};
 
 type ActionData = {
   formError?: string;
@@ -49,18 +49,18 @@ const badRequest = (data: ActionData) => json(data, { status: 400 });
 
 export const action: ActionFunction = async ({ request, params }) => {
   const user = await getUser(request);
-  if(!user) {
+  if (!user) {
     throw new Response('User Not Found.', {
       status: 404
-    })
+    });
   }
 
   const userId = user.id;
 
-  if(!params.ticketId) {
+  if (!params.ticketId) {
     throw new Response('Ticket Not Found.', {
-			status: 404
-		});
+      status: 404
+    });
   }
   const ticketId = params.ticketId;
 
@@ -78,7 +78,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     });
   }
 
-  const fields = {  text };
+  const fields = { text };
   const fieldErrors = {
     text: validateText(text)
   };
@@ -89,18 +89,18 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   const ticket = await prisma.ticket.findUnique({ where: { ticketId } });
 
-  if(!ticket) {
+  if (!ticket) {
     throw new Response('Ticket Not Found.', {
-			status: 404
-		});
+      status: 404
+    });
   }
 
   const authorId = userId;
 
-  if(!authorId) {
+  if (!authorId) {
     throw new Response('Author Not Found.', {
-			status: 404
-		});
+      status: 404
+    });
   }
 
   await prisma.note.create({
@@ -140,10 +140,10 @@ export default function userAddTicketRoute() {
               name="text"
               defaultValue={actionData?.fields?.text}
               aria-invalid={Boolean(actionData?.fieldErrors?.text)}
-								aria-errormessage={
-									actionData?.fieldErrors?.text
-										? 'text-error' : undefined
-								}
+              aria-errormessage={
+                actionData?.fieldErrors?.text
+                  ? 'text-error' : undefined
+              }
               className='form-textarea'
             />
           </label>
