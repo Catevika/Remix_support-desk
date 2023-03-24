@@ -80,7 +80,7 @@ export default function adminUserListRoute() {
 						defaultValue={query ?? undefined}
 						className='search-input'
 					/>
-					<button type='submit' className='btn btn-search'>
+					<button title="Search" type='submit' className='btn btn-search'>
 						<FaSearch className='search-icon' />
 					</button>
 				</Form>

@@ -81,7 +81,7 @@ export default function adminNoteListRoute() {
 							defaultValue={query ?? undefined}
 							className='search-input'
 						/>
-						<button type='submit' className='btn btn-search'>
+						<button title="Search" type='submit' className='btn btn-search'>
 							<FaSearch className='search-icon' />
 						</button>
 					</Form>
@@ -134,14 +134,14 @@ export default function adminNoteListRoute() {
 											minute: '2-digit',
 											hour12: false
 										}) !==
-										new Date(note.updatedAt).toLocaleString('en-us', {
-											month: '2-digit',
-											day: '2-digit',
-											year: '2-digit',
-											hour: '2-digit',
-											minute: '2-digit',
-											hour12: false
-										}) ? (
+											new Date(note.updatedAt).toLocaleString('en-us', {
+												month: '2-digit',
+												day: '2-digit',
+												year: '2-digit',
+												hour: '2-digit',
+												minute: '2-digit',
+												hour12: false
+											}) ? (
 											<span>
 												{new Date(note.updatedAt).toLocaleString('en-us', {
 													month: '2-digit',
@@ -180,7 +180,7 @@ export default function adminNoteListRoute() {
 	);
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
+export function ErrorBoundary({ error }: { error: Error; }) {
 	console.error(error);
 	return (
 		<div className='error-container'>

@@ -3,7 +3,7 @@ import { NavLink } from '@remix-run/react';
 function AdminNavBar() {
 	return (
 		<nav id='menu-toggle'>
-			<input id='checkbox' type='checkbox' />
+			<input title="Menu" id='checkbox' type='checkbox' />
 			<span></span>
 			<span></span>
 			<span></span>

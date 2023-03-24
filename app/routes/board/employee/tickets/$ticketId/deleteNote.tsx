@@ -1,5 +1,5 @@
 import { ActionFunction, LinksFunction, redirect } from '@remix-run/node';
-import { Form, useNavigate, useParams, useTransition } from '@remix-run/react';
+import { Form, useNavigate, useParams, useNavigation } from '@remix-run/react';
 import { useRef } from 'react';
 import { deleteAllNotes } from '~/models/notes.server';
 import {
@@ -38,14 +38,14 @@ export default function deleteNoteConfirmRoute() {
 	const navigate = useNavigate();
 	const ticketId = useParams().ticketId;
 	const cancelRef = useRef(null);
-	const transition = useTransition();
+	const navigation = useNavigation();
 
 	function onDismiss() {
 		navigate(`/board/employee/tickets/${ticketId}`);
 	}
 
 	const isDeleting = Boolean(
-		transition.submission?.formData.get('intent') === 'delete'
+		navigation.formData?.get('intent') === 'delete'
 	);
 
 	return (

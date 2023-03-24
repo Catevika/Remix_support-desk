@@ -10,7 +10,7 @@ import {
 	useLoaderData,
 	useActionData,
 	useNavigate,
-	useTransition
+	useNavigation
 } from '@remix-run/react';
 import styles from '@reach/dialog/styles.css';
 
@@ -119,13 +119,13 @@ export default function userNoteViewRoute() {
 	const { note } = useLoaderData<LoaderData>();
 	const navigate = useNavigate();
 	const actionData = useActionData() as ActionData;
-	const transition = useTransition();
+	const navigation = useNavigation();
 
 	const isUpdating = Boolean(
-		transition.submission?.formData.get('intent') === 'update'
+		navigation.formData?.get('intent') === 'update'
 	);
 	const isDeleting = Boolean(
-		transition.submission?.formData.get('intent') === 'delete'
+		navigation.formData?.get('intent') === 'delete'
 	);
 
 	function onDismiss() {
@@ -153,7 +153,6 @@ export default function userNoteViewRoute() {
 							id='text'
 							name='text'
 							defaultValue={note?.text}
-							aria-invalid={Boolean(actionData?.fieldErrors?.text)}
 							aria-errormessage={
 								actionData?.fieldErrors?.text ? 'text-error' : undefined
 							}

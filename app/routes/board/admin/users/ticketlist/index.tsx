@@ -84,7 +84,7 @@ export default function adminTicketListRoute() {
 							defaultValue={query ?? undefined}
 							className='search-input'
 						/>
-						<button type='submit' className='btn btn-search'>
+						<button title="Search" type='submit' className='btn btn-search'>
 							<FaSearch className='search-icon' />
 						</button>
 					</Form>
@@ -145,14 +145,14 @@ export default function adminTicketListRoute() {
 											minute: '2-digit',
 											hour12: false
 										}) !==
-										new Date(ticket.updatedAt).toLocaleString('en-us', {
-											month: '2-digit',
-											day: '2-digit',
-											year: '2-digit',
-											hour: '2-digit',
-											minute: '2-digit',
-											hour12: false
-										}) ? (
+											new Date(ticket.updatedAt).toLocaleString('en-us', {
+												month: '2-digit',
+												day: '2-digit',
+												year: '2-digit',
+												hour: '2-digit',
+												minute: '2-digit',
+												hour12: false
+											}) ? (
 											<span>
 												{new Date(ticket.updatedAt).toLocaleString('en-us', {
 													month: '2-digit',
@@ -211,7 +211,7 @@ export function CatchBoundary() {
 	throw new Error(`Unexpected caught response with status: ${caught.status}`);
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
+export function ErrorBoundary({ error }: { error: Error; }) {
 	console.error(error);
 	return (
 		<div className='error-container'>

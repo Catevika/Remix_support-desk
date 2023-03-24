@@ -4,7 +4,7 @@ import {
 	useActionData,
 	useSearchParams,
 	Form,
-	useTransition,
+	useNavigation,
 	Link
 } from '@remix-run/react';
 
@@ -60,8 +60,8 @@ export const action: ActionFunction = async ({ request }) => {
 			? safeRedirect(redirectTo)
 			: (redirectTo = safeRedirect('/board/admin'))
 		: redirectTo
-		? safeRedirect(redirectTo)
-		: (redirectTo = safeRedirect('/board/employee'));
+			? safeRedirect(redirectTo)
+			: (redirectTo = safeRedirect('/board/employee'));
 
 	const fields = { email, password };
 	const fieldErrors = {
@@ -87,7 +87,7 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Login() {
 	const actionData = useActionData() as ActionData;
 	const [searchParams] = useSearchParams();
-	const transition = useTransition();
+	const navigation = useNavigation();
 	return (
 		<>
 			<header className='container header'>
@@ -120,7 +120,6 @@ export default function Login() {
 								name='email'
 								autoComplete='email'
 								defaultValue={actionData?.fields?.email}
-								aria-invalid={Boolean(actionData?.fieldErrors?.email)}
 								aria-errormessage={
 									actionData?.fieldErrors?.email ? 'email-error' : undefined
 								}
@@ -140,7 +139,6 @@ export default function Login() {
 								autoComplete='current-password'
 								defaultValue={actionData?.fields?.password}
 								type='password'
-								aria-invalid={Boolean(actionData?.fieldErrors?.password)}
 								aria-errormessage={
 									actionData?.fieldErrors?.password
 										? 'password-error'
@@ -161,7 +159,7 @@ export default function Login() {
 							) : null}
 						</div>
 						<button type='submit' className='btn form-btn btn-center'>
-							{transition.submission ? 'Logging in...' : 'Log in'}
+							{navigation ? 'Logging in...' : 'Log in'}
 						</button>
 					</Form>
 				</div>
@@ -170,7 +168,7 @@ export default function Login() {
 	);
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
+export function ErrorBoundary({ error }: { error: Error; }) {
 	console.error(error);
 	return (
 		<div className='error-container'>

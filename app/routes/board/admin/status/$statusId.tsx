@@ -10,7 +10,7 @@ import {
 	useLoaderData,
 	useActionData,
 	useCatch,
-	useTransition
+	useNavigation
 } from '@remix-run/react';
 
 import { requireUserId, getUser } from '~/utils/session.server';
@@ -136,17 +136,17 @@ export default function adminStatusRoute() {
 	const user = data.user;
 
 	const actionData = useActionData() as ActionData;
-	const transition = useTransition();
+	const navigation = useNavigation();
 
 	const isNewStatus = !data.status?.type;
 	const isAdding = Boolean(
-		transition.submission?.formData.get('intent') === 'create'
+		navigation.formData?.get('intent') === 'create'
 	);
 	const isUpdating = Boolean(
-		transition.submission?.formData.get('intent') === 'update'
+		navigation.formData?.get('intent') === 'update'
 	);
 	const isDeleting = Boolean(
-		transition.submission?.formData.get('intent') === 'delete'
+		navigation.formData?.get('intent') === 'delete'
 	);
 
 	return (
@@ -170,7 +170,6 @@ export default function adminStatusRoute() {
 									type='text'
 									defaultValue={data.status?.type}
 									name='type'
-									aria-invalid={Boolean(actionData?.fieldErrors?.type)}
 									aria-errormessage={
 										actionData?.fieldErrors?.type ? 'status-error' : undefined
 									}
@@ -284,7 +283,7 @@ export function CatchBoundary() {
 	throw new Error(`Unexpected caught response with status: ${caught.status}`);
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
+export function ErrorBoundary({ error }: { error: Error; }) {
 	console.error(error);
 	return (
 		<div className='error-container'>

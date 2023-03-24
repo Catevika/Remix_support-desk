@@ -217,7 +217,6 @@ export default function adminUserIdRoute() {
 										name='username'
 										autoComplete='name'
 										defaultValue={user.username}
-										aria-invalid={Boolean(actionData?.fieldErrors?.username)}
 										aria-errormessage={
 											actionData?.fieldErrors?.username
 												? 'username-error'
@@ -241,7 +240,6 @@ export default function adminUserIdRoute() {
 										name='email'
 										autoComplete='email'
 										defaultValue={user.email}
-										aria-invalid={Boolean(actionData?.fieldErrors?.email)}
 										aria-errormessage={
 											actionData?.fieldErrors?.email ? 'email-error' : undefined
 										}
@@ -262,7 +260,6 @@ export default function adminUserIdRoute() {
 										name='password'
 										defaultValue={''}
 										autoComplete='new-password'
-										aria-invalid={Boolean(actionData?.fieldErrors?.password)}
 										aria-errormessage={
 											actionData?.fieldErrors?.password
 												? 'password-error'
@@ -401,7 +398,7 @@ export function CatchBoundary() {
 	}
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
+export function ErrorBoundary({ error }: { error: Error; }) {
 	const { userId } = useParams();
 	console.log(error);
 	return (

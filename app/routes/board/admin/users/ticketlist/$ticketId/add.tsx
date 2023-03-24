@@ -139,7 +139,6 @@ export default function userAddTicketRoute() {
               id="text"
               name="text"
               defaultValue={actionData?.fields?.text}
-              aria-invalid={Boolean(actionData?.fieldErrors?.text)}
               aria-errormessage={
                 actionData?.fieldErrors?.text
                   ? 'text-error' : undefined

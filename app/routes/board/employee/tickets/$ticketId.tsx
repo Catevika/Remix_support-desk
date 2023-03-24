@@ -241,7 +241,6 @@ export default function userTicketIdRoute() {
 									id='title'
 									name='title'
 									defaultValue={ticket?.title}
-									aria-invalid={Boolean(actionData?.fieldErrors?.title)}
 									aria-errormessage={
 										actionData?.fieldErrors?.title ? 'title-error' : undefined
 									}
@@ -335,7 +334,6 @@ export default function userTicketIdRoute() {
 									defaultValue={ticket?.description}
 									id='description'
 									name='description'
-									aria-invalid={Boolean(actionData?.fieldErrors?.description)}
 									aria-errormessage={
 										actionData?.fieldErrors?.description
 											? 'description-error'
@@ -462,18 +460,18 @@ export default function userTicketIdRoute() {
 							</div>
 							{notesByTicketId?.length
 								? notesByTicketId.map((note) => (
-										<div key={note.noteId} className='row'>
-											<p>{note.noteUser.username}</p>
-											<p>{note.text}</p>
-											<p>
-												{new Date(note.createdAt).toLocaleString('en-us', {
-													month: '2-digit',
-													day: '2-digit',
-													year: '2-digit',
-													hour: '2-digit',
-													minute: '2-digit',
-													hour12: false
-												}) !==
+									<div key={note.noteId} className='row'>
+										<p>{note.noteUser.username}</p>
+										<p>{note.text}</p>
+										<p>
+											{new Date(note.createdAt).toLocaleString('en-us', {
+												month: '2-digit',
+												day: '2-digit',
+												year: '2-digit',
+												hour: '2-digit',
+												minute: '2-digit',
+												hour12: false
+											}) !==
 												new Date(note.updatedAt).toLocaleString('en-us', {
 													month: '2-digit',
 													day: '2-digit',
@@ -482,38 +480,38 @@ export default function userTicketIdRoute() {
 													minute: '2-digit',
 													hour12: false
 												}) ? (
-													<span>
-														{new Date(note.updatedAt).toLocaleString('en-us', {
-															month: '2-digit',
-															day: '2-digit',
-															year: '2-digit',
-															hour: '2-digit',
-															minute: '2-digit',
-															hour12: false
-														})}
-													</span>
-												) : (
-													<span>
-														{new Date(note.createdAt).toLocaleString('en-us', {
-															month: '2-digit',
-															day: '2-digit',
-															year: '2-digit',
-															hour: '2-digit',
-															minute: '2-digit',
-															hour12: false
-														})}
-													</span>
-												)}
-											</p>
-											<p>
-												<Link
-													to={`/board/employee/tickets/${ticket?.ticketId}/${note.noteId}`}
-												>
-													View
-												</Link>
-											</p>
-										</div>
-								  ))
+												<span>
+													{new Date(note.updatedAt).toLocaleString('en-us', {
+														month: '2-digit',
+														day: '2-digit',
+														year: '2-digit',
+														hour: '2-digit',
+														minute: '2-digit',
+														hour12: false
+													})}
+												</span>
+											) : (
+												<span>
+													{new Date(note.createdAt).toLocaleString('en-us', {
+														month: '2-digit',
+														day: '2-digit',
+														year: '2-digit',
+														hour: '2-digit',
+														minute: '2-digit',
+														hour12: false
+													})}
+												</span>
+											)}
+										</p>
+										<p>
+											<Link
+												to={`/board/employee/tickets/${ticket?.ticketId}/${note.noteId}`}
+											>
+												View
+											</Link>
+										</p>
+									</div>
+								))
 								: null}
 						</div>
 					</>
@@ -541,7 +539,7 @@ export function CatchBoundary() {
 	throw new Error(`Unexpected caught response with status: ${caught.status}`);
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
+export function ErrorBoundary({ error }: { error: Error; }) {
 	console.error(error);
 	return (
 		<div className='error-container'>

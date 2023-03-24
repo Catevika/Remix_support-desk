@@ -176,7 +176,6 @@ export default function Register() {
 									name='username'
 									autoComplete='name'
 									defaultValue={actionData?.fields?.username}
-									aria-invalid={Boolean(actionData?.fieldErrors?.username)}
 									aria-errormessage={
 										actionData?.fieldErrors?.username
 											? 'username-error'
@@ -200,7 +199,6 @@ export default function Register() {
 									name='email'
 									autoComplete='email'
 									defaultValue={actionData?.fields?.email}
-									aria-invalid={Boolean(actionData?.fieldErrors?.email)}
 									aria-errormessage={
 										actionData?.fieldErrors?.email ? 'email-error' : undefined
 									}
@@ -221,7 +219,6 @@ export default function Register() {
 									name='password'
 									autoComplete='current-password'
 									defaultValue={actionData?.fields?.password}
-									aria-invalid={Boolean(actionData?.fieldErrors?.password)}
 									aria-errormessage={
 										actionData?.fieldErrors?.password
 											? 'password-error'
@@ -290,7 +287,7 @@ export default function Register() {
 	);
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
+export function ErrorBoundary({ error }: { error: Error; }) {
 	console.error(error);
 	return (
 		<div className='error-container'>
