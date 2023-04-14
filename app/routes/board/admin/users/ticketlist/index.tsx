@@ -180,7 +180,7 @@ export default function adminTicketListRoute() {
 							))}
 						</div>
 					) : (
-						<p className='form-container form-content'>
+						<p className='form-container-center form-content'>
 							No ticket available yet
 						</p>
 					)}

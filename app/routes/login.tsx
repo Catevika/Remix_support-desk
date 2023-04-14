@@ -159,7 +159,7 @@ export default function Login() {
 							) : null}
 						</div>
 						<button type='submit' className='btn form-btn btn-center'>
-							{navigation ? 'Logging in...' : 'Log in'}
+							{navigation.state === "submitting" ? 'Logging in...' : 'Log in'}
 						</button>
 					</Form>
 				</div>

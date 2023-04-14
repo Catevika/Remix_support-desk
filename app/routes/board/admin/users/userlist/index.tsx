@@ -147,7 +147,7 @@ export default function adminUserListRoute() {
 						))}
 					</div>
 				) : (
-					<p className='form-container form-content'>No user available yet</p>
+					<p className='form-container-center form-content'>No user available yet</p>
 				)}
 			</main>
 		</>

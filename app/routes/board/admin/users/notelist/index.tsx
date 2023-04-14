@@ -169,7 +169,7 @@ export default function adminNoteListRoute() {
 							))}
 						</div>
 					) : (
-						<p className='form-container form-content'>No note available yet</p>
+						<p className='form-container-center form-content'>No note available yet</p>
 					)}
 				</div>
 				<div>
