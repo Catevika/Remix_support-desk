@@ -1,6 +1,6 @@
-import type { LoaderFunction } from '@remix-run/node';
+import type { LoaderFunction, MetaFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { useLoaderData, Link, NavLink, Outlet } from '@remix-run/react';
+import { useLoaderData, Link, NavLink, Outlet, useRouteError, isRouteErrorResponse } from '@remix-run/react';
 import { getServices } from '~/models/services.server';
 import AdminNavBar from '~/components/AdminNavBar';
 import LogoutButton from '~/components/LogoutButton';
@@ -17,12 +17,17 @@ export const loader: LoaderFunction = async () => {
 	return json<LoaderData>({ services });
 };
 
+export const meta: MetaFunction<typeof loader> = () => {
+	return [{ title: 'Support-Desk | Services' }];
+};
+
+
 export default function adminServiceRoute() {
 	const { services } = useLoaderData<LoaderData>();
 	return (
 		<>
 			<header className='container header'>
-				<Link to='/board/admin' className='icon-header'>
+				<Link to='/board/admin/index' className='icon-header'>
 					<FaTools className='icon-size icon-shadow' />
 					Back to Board
 				</Link>
@@ -77,13 +82,17 @@ export default function adminServiceRoute() {
 	);
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
-	console.error(error);
-	return (
-		<div className='error-container'>
-			<div className='form-container form-container-message form-content'>
-				Something unexpected went wrong. Sorry about that.
+export function ErrorBoundary() {
+	const error = useRouteError();
+	if (isRouteErrorResponse(error)) {
+		return (
+			<div className='error-container'>
+				<div className='form-container form-container-message form-content'>
+					Something unexpected went wrong. Sorry about that.
+				</div>
+				<p>Status: {error.status}</p>
+				<p>{error.data.message}</p>
 			</div>
-		</div>
-	);
+		);
+	}
 }

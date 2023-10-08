@@ -1,6 +1,6 @@
 import type { LoaderFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { Outlet, useLoaderData, Link, useCatch } from '@remix-run/react';
+import { Outlet, useLoaderData, Link, useRouteError, isRouteErrorResponse } from '@remix-run/react';
 import { getUserId } from '~/utils/session.server';
 import { getTicketListingByUserId } from '~/models/tickets.server';
 import LogoutButton from '~/components/LogoutButton';
@@ -24,7 +24,7 @@ export default function employeeTicketRoute() {
 	return (
 		<>
 			<header className='container header'>
-				<Link to='/board/employee' className='icon-header'>
+				<Link to='/board/employee/index' className='icon-header'>
 					<FaTools className='icon-size icon-shadow' />
 					Back to Board
 				</Link>
@@ -85,14 +85,14 @@ export default function employeeTicketRoute() {
 											minute: '2-digit',
 											hour12: false
 										}) !==
-										new Date(ticket.updatedAt).toLocaleString('en-us', {
-											month: '2-digit',
-											day: '2-digit',
-											year: '2-digit',
-											hour: '2-digit',
-											minute: '2-digit',
-											hour12: false
-										}) ? (
+											new Date(ticket.updatedAt).toLocaleString('en-us', {
+												month: '2-digit',
+												day: '2-digit',
+												year: '2-digit',
+												hour: '2-digit',
+												minute: '2-digit',
+												hour12: false
+											}) ? (
 											<span>
 												{new Date(ticket.updatedAt).toLocaleString('en-us', {
 													month: '2-digit',
@@ -131,31 +131,30 @@ export default function employeeTicketRoute() {
 	);
 }
 
-export function CatchBoundary() {
-	const caught = useCatch();
-
-	if (caught.status === 401) {
-		return (
-			<div className='error-container'>
-				<div className='form-container form-content'>
-					<p>You must be logged in to create a ticket.</p>
-					<Link to='/login?redirectTo=/tickets/new-ticket'>
-						<button className='btn form-btn'>Login</button>
-					</Link>
+export function ErrorBoundary() {
+	const error = useRouteError();
+	if (isRouteErrorResponse(error)) {
+		if (error.status === 401) {
+			return (
+				<div className='error-container'>
+					<div className='form-container form-content'>
+						<p>You must be logged in to create a ticket.</p>
+						<Link to='/login?redirectTo=/tickets/new-ticket/index'>
+							<button className='btn form-btn'>Login</button>
+						</Link>
+					</div>
 				</div>
-			</div>
-		);
+			);
+		} else {
+			return (
+				<div className='error-container'>
+					<div className='form-container form-container-message form-content'>
+						Something unexpected went wrong. Sorry about that.
+					</div>
+					<p>Status: {error.status}</p>
+					<p>{error.data.message}</p>
+				</div>
+			);
+		}
 	}
-	throw new Error(`Unexpected caught response with status: ${caught.status}`);
-}
-
-export function ErrorBoundary({ error }: { error: Error }) {
-	console.error(error);
-	return (
-		<div className='error-container'>
-			<div className='form-container form-container-message form-content'>
-				Something unexpected went wrong. Sorry about that.
-			</div>
-		</div>
-	);
 }

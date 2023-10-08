@@ -7,7 +7,8 @@ import {
 	Outlet,
 	Scripts,
 	ScrollRestoration,
-	useCatch
+	useRouteError,
+	isRouteErrorResponse
 } from '@remix-run/react';
 
 import url from '~/assets/catevika.png';
@@ -22,10 +23,11 @@ export const links: LinksFunction = () => {
 	];
 };
 
-export const meta: MetaFunction = () => ({
-	title: 'New Remix App',
-	viewport: 'width=device-width,initial-scale=1'
-});
+export const meta: MetaFunction = () => {
+	return [
+		{ title: 'New Remix App' },
+		{ viewport: 'width=device-width,initial-scale=1' }];
+};
 
 export default function App() {
 	return (
@@ -44,32 +46,36 @@ export default function App() {
 	);
 }
 
-export function CatchBoundary() {
-	const caught = useCatch();
+export function ErrorBoundary() {
+	const error = useRouteError();
 
-	return (
-		<html>
-			<head>
-				<title>Oops!</title>
-				<Meta />
-				<Links />
-			</head>
-			<body>
-				<div className='form-group'>
-					<div className='container'>
-						<p style={{ fontSize: '3.5rem' }}>Ooops!</p>
-						<p style={{ fontSize: '3.5rem' }}>{caught.status}</p>
-						<p style={{ fontSize: '3.5rem' }}>{caught.statusText}</p>
-						<img src={url} alt='' style={{ maxWidth: '320px' }} />
+	// when true, this is what used to go to `CatchBoundary`
+	if (isRouteErrorResponse(error)) {
+		return (
+			<html>
+				<head>
+					<title>Oops!</title>
+					<Meta />
+					<Links />
+				</head>
+				<body>
+					<div className='form-group'>
+						<div className='container'>
+							<p style={{ fontSize: '3.5rem' }}>Ooops!</p>
+							<p style={{ fontSize: '3.5rem' }}>Status: {error.status}</p>
+							<p style={{ fontSize: '3.5rem' }}>{error.data.message}</p>
+							<img src={url} alt='' style={{ maxWidth: '320px' }} />
+						</div>
+						<div className='container'>
+							<Link to='/'>
+								<button type='button' className='btn form-btn'>Back Home</button>
+							</Link>
+						</div>
 					</div>
-					<div className='container'>
-						<Link to='/'>
-							<button type='button' className='btn form-btn'>Back Home</button>
-						</Link>
-					</div>
-				</div>
-				<Scripts />
-			</body>
-		</html>
-	);
+					<Scripts />
+				</body>
+			</html>
+		);
+	}
 }
+

@@ -10,7 +10,9 @@ import {
 	Link,
 	useFetcher,
 	Outlet,
-	useParams
+	useParams,
+	useRouteError,
+	isRouteErrorResponse
 } from '@remix-run/react';
 
 import { getUser } from '~/utils/session.server';
@@ -22,22 +24,6 @@ import { getTicket, deleteTicket } from '~/models/tickets.server';
 import { getNoteListingByTicketId } from '~/models/notes.server';
 import { FaTools } from 'react-icons/fa';
 import LogoutButton from '~/components/LogoutButton';
-
-export const meta: MetaFunction = ({
-	data
-}: {
-	data: LoaderData | undefined;
-}) => {
-	if (!data) {
-		return {
-			title: 'No ticket'
-		};
-	} else {
-		return {
-			title: 'Support Desk | Tickets'
-		};
-	}
-};
 
 type LoaderData = {
 	user: Awaited<ReturnType<typeof getUser>>;
@@ -69,6 +55,16 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 	return data;
 };
 
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	if (!data) {
+		return [{ title: 'No ticket' }];
+	} else {
+		return [{
+			title: 'Support Desk | Tickets'
+		}];
+	}
+};
+
 type ActionData = {
 	formError?: string;
 	fieldErrors?: {
@@ -98,7 +94,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
 	/* if (intent === 'delete') {
 		await deleteTicket(ticketId);
-		return redirect('/board/admin/users/ticketlist');
+		return redirect('/board/admin/users/ticketlist/index');
 	} */
 
 	function onlyNumbers(str: string) {
@@ -176,7 +172,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 		where: { ticketId: params.ticketId }
 	});
 
-	return redirect('/board/admin/users/ticketlist');
+	return redirect('/board/admin/users/ticketlist/index');
 };
 
 export default function userTicketIdRoute() {
@@ -187,23 +183,23 @@ export default function userTicketIdRoute() {
 	const fetcher = useFetcher();
 
 	function handleSelectStatus(selectedStatus: string) {
-		return fetcher.submission?.formData.get('status') === selectedStatus;
+		return fetcher.formData?.get('status') === selectedStatus;
 	}
 
 	function handleSelectProduct(selectedProduct: string) {
-		return fetcher.submission?.formData.get('product') === selectedProduct;
+		return fetcher.formData?.get('product') === selectedProduct;
 	}
 
 	const hasNotes = notesByTicketId && notesByTicketId.length > 1;
 
 	const isUpdating = Boolean(
-		fetcher.submission?.formData.get('intent') === 'update'
+		fetcher.formData?.get('intent') === 'update'
 	);
 
 	return (
 		<>
 			<header className='container header'>
-				<Link to='/board/admin/users/ticketlist' className='icon-header'>
+				<Link to='/board/admin/users/ticketlist/index' className='icon-header'>
 					<FaTools className='icon-size icon-shadow' /> Tickets
 				</Link>
 				<h1>Ticket</h1>
@@ -222,7 +218,6 @@ export default function userTicketIdRoute() {
 				</p>
 				<div className='form-scroll'>
 					<fetcher.Form
-						replace
 						method='post'
 						className='form'
 						key={ticket?.ticketId}
@@ -398,7 +393,7 @@ export default function userTicketIdRoute() {
 								>
 									{isUpdating ? 'Updating...' : 'Update'}
 								</button>
-								<Link to='/board/admin/users/ticketlist/'>
+								<Link to='/board/admin/users/ticketlist/index'>
 									<button className='btn'>Back to Ticket List</button>
 								</Link>
 								{/* <button
@@ -516,32 +511,37 @@ export default function userTicketIdRoute() {
 	);
 }
 
-export function ErrorBoundary({ error }: { error: Error; }) {
+export function ErrorBoundary() {
 	const { userId } = useParams();
-	console.log(error);
-	return (
-		<div className='error-container' style={{ fontSize: '1.5rem' }}>
-			<div className='form-container-message form-content'>
-				<p>
-					To{' '}
-					<span className='error-danger error-danger-big'>
-						delete a ticket:
-					</span>
-				</p>
-				<p>first delete its associated notes,</p>
-				<p>then come back to the ticket</p>
-				<p>and click the delete button.</p>
-				<p>OR</p>
-				<p>delete the ticket via the database.</p>
-				<p>
-					<span className='error-danger error-danger-big'>
-						These actions are permanent.
-					</span>
-				</p>
-				<Link to={`/board/admin/users/ticketlist`}>
-					<button className='btn form-btn'>Back to Ticket List</button>
-				</Link>
+	const error = useRouteError();
+	if (isRouteErrorResponse(error)) {
+
+		return (
+			<div className='error-container' style={{ fontSize: '1.5rem' }}>
+				<div className='form-container-message form-content'>
+					<p>
+						To{' '}
+						<span className='error-danger error-danger-big'>
+							delete a ticket:
+						</span>
+					</p>
+					<p>first delete its associated notes,</p>
+					<p>then come back to the ticket</p>
+					<p>and click the delete button.</p>
+					<p>OR</p>
+					<p>delete the ticket via the database.</p>
+					<p>
+						<span className='error-danger error-danger-big'>
+							These actions are permanent.
+						</span>
+					</p>
+					<Link to={`/board/admin/users/ticketlist/index`}>
+						<button className='btn form-btn'>Back to Ticket List</button>
+					</Link>
+				</div>
+				<p>Status: {error.status}</p>
+				<p>{error.data.message}</p>
 			</div>
-		</div>
-	);
+		);
+	}
 }

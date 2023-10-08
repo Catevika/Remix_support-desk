@@ -9,7 +9,9 @@ import {
 	useLoaderData,
 	useActionData,
 	useSearchParams,
-	useFetcher
+	useFetcher,
+	useRouteError,
+	isRouteErrorResponse
 } from '@remix-run/react';
 
 import {
@@ -25,12 +27,6 @@ import { getUserByEmail } from '~/models/users.server';
 import { getServices } from '~/models/services.server';
 import { prisma } from '~/utils/db.server';
 
-export const meta: MetaFunction = () => {
-	return {
-		title: 'Support-Desk | Register'
-	};
-};
-
 type LoaderData = {
 	services: Awaited<ReturnType<typeof getServices>>;
 };
@@ -38,6 +34,10 @@ type LoaderData = {
 export const loader: LoaderFunction = async () => {
 	const services = await getServices();
 	return json<LoaderData>({ services });
+};
+
+export const meta: MetaFunction<typeof loader> = () => {
+	return [{ title: 'Support-Desk | Register' }];
 };
 
 type ActionData = {
@@ -122,9 +122,9 @@ export const action: ActionFunction = async ({ request }) => {
 
 	const isAdmin = await getUserByEmail(email);
 	if (isAdmin?.service === process.env.ADMIN_ROLE) {
-		redirectTo = '/board/admin';
+		redirectTo = '/board/admin/index';
 	} else {
-		redirectTo = '/board/employee';
+		redirectTo = '/board/employee/index';
 	}
 
 	return createUserSession(user.id, redirectTo);
@@ -161,7 +161,7 @@ export default function Register() {
 					</Link>
 				</em>
 				<div className='form-content'>
-					<fetcher.Form reloadDocument method='post' className='form'>
+					<fetcher.Form method='post' className='form'>
 						<input
 							type='hidden'
 							name='redirectTo'
@@ -287,13 +287,17 @@ export default function Register() {
 	);
 }
 
-export function ErrorBoundary({ error }: { error: Error; }) {
-	console.error(error);
-	return (
-		<div className='error-container'>
-			<div className='form-container form-container-message form-content'>
-				Something unexpected went wrong. Sorry about that.
+export function ErrorBoundary() {
+	const error = useRouteError();
+	if (isRouteErrorResponse(error)) {
+		return (
+			<div className='error-container'>
+				<div className='form-container form-container-message form-content'>
+					Something unexpected went wrong. Sorry about that.
+				</div>
+				<p>Status: {error.status}</p>
+				<p>{error.data.message}</p>
 			</div>
-		</div>
-	);
+		);
+	}
 }

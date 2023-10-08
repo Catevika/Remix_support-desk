@@ -1,4 +1,4 @@
-import type { LoaderFunction } from '@remix-run/node';
+import type { LoaderFunction, MetaFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { useLoaderData, Link, NavLink, Outlet } from '@remix-run/react';
 import { getProducts } from '~/models/products.server';
@@ -16,13 +16,18 @@ export const loader: LoaderFunction = async () => {
 	return json<LoaderData>({ products });
 };
 
+export const meta: MetaFunction<typeof loader> = () => {
+	return [{ title: 'Support-Desk | Products' }];
+};
+
+
 export default function adminProductRoute() {
 	const { products } = useLoaderData<LoaderData>();
 
 	return (
 		<>
 			<header className='container header'>
-				<Link to='/board/admin' className='icon-header'>
+				<Link to='/board/admin/index' className='icon-header'>
 					<FaTools className='icon-size icon-shadow' />
 					Back to Board
 				</Link>

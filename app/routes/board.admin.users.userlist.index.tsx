@@ -44,7 +44,7 @@ export default function adminUserListRoute() {
 	return (
 		<>
 			<header className='container header'>
-				<Link to='/board/admin' className='icon-header'>
+				<Link to='/board/admin/index' className='icon-header'>
 					<FaTools className='icon-size icon-shadow' />
 					Back to Board
 				</Link>
@@ -65,7 +65,7 @@ export default function adminUserListRoute() {
 				<Form
 					ref={formRef}
 					method='get'
-					action='/board/admin/users/userlist'
+					action='/board/admin/users/userlist/index'
 					className='search-container form-group'
 				>
 					<label htmlFor='query' className='label-search'>
@@ -84,7 +84,7 @@ export default function adminUserListRoute() {
 						<FaSearch className='search-icon' />
 					</button>
 				</Form>
-				<Link to='/board/admin/users/userlist' className='flex-container'>
+				<Link to='/board/admin/users/userlist/index' className='flex-container'>
 					Back to complete user list
 				</Link>
 				{users.length && typeof users !== 'string' ? (

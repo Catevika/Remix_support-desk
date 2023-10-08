@@ -6,7 +6,9 @@ import {
 	Link,
 	Form,
 	useSearchParams,
-	useLocation
+	useLocation,
+	useRouteError,
+	isRouteErrorResponse
 } from '@remix-run/react';
 import { getAllNotes, getNotesBySearchTerm } from '~/models/notes.server';
 import AdminNavBar from '~/components/AdminNavBar';
@@ -44,7 +46,7 @@ export default function adminNoteListRoute() {
 	return (
 		<>
 			<header className='container header'>
-				<Link to='/board/admin' className='icon-header'>
+				<Link to='/board/admin/index' className='icon-header'>
 					<FaTools className='icon-size icon-shadow' />
 					Back to Board
 				</Link>
@@ -66,7 +68,7 @@ export default function adminNoteListRoute() {
 					<Form
 						ref={formRef}
 						method='get'
-						action='/board/admin/users/notelist'
+						action='/board/admin/users/notelist/index'
 						className='search-container form-group'
 					>
 						<label htmlFor='query' className='label-search'>
@@ -85,7 +87,7 @@ export default function adminNoteListRoute() {
 							<FaSearch className='search-icon' />
 						</button>
 					</Form>
-					<Link to='/board/admin/users/notelist' className='flex-container'>
+					<Link to='/board/admin/users/notelist/index' className='flex-container'>
 						Back to complete note list
 					</Link>
 					{notes.length && typeof notes !== 'string' ? (
@@ -180,13 +182,17 @@ export default function adminNoteListRoute() {
 	);
 }
 
-export function ErrorBoundary({ error }: { error: Error; }) {
-	console.error(error);
-	return (
-		<div className='error-container'>
-			<div className='form-container form-container-message form-content'>
-				Something unexpected went wrong. Sorry about that.
+export function ErrorBoundary() {
+	const error = useRouteError();
+	if (isRouteErrorResponse(error)) {
+		return (
+			<div className='error-container'>
+				<div className='form-container form-container-message form-content'>
+					Something unexpected went wrong. Sorry about that.
+				</div>
+				<p>Status: {error.status}</p>
+				<p>{error.data.message}</p>
 			</div>
-		</div>
-	);
+		);
+	}
 }

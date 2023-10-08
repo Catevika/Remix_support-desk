@@ -2,7 +2,8 @@ import { Dialog } from '@reach/dialog';
 import type {
 	LoaderFunction,
 	ActionFunction,
-	LinksFunction
+	LinksFunction,
+	MetaFunction
 } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import {
@@ -57,6 +58,14 @@ export const loader: LoaderFunction = async ({ params }) => {
 	return data;
 };
 
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	if (!data) {
+		return [{ title: 'No note' }];
+	} else {
+		return [{ title: 'Support Desk | Notes' }];
+	}
+};
+
 type ActionData = {
 	formError?: string;
 	fieldErrors?: {
@@ -108,10 +117,10 @@ export const action: ActionFunction = async ({ request, params }) => {
 			},
 			where: { noteId: params.noteId }
 		});
-		return redirect('/board/admin/users/notelist');
+		return redirect('/board/admin/users/notelist/index');
 	} else {
 		await deleteNote(noteId);
-		return redirect('/board/admin/users/notelist');
+		return redirect('/board/admin/users/notelist/index');
 	}
 };
 
@@ -129,7 +138,7 @@ export default function userNoteViewRoute() {
 	);
 
 	function onDismiss() {
-		navigate('/board/admin/users/notelist');
+		navigate('/board/admin/users/notelist/index');
 	}
 
 	return (

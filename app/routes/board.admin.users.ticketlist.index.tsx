@@ -4,10 +4,11 @@ import {
 	Outlet,
 	useLoaderData,
 	Link,
-	useCatch,
 	Form,
 	useSearchParams,
-	useLocation
+	useLocation,
+	useRouteError,
+	isRouteErrorResponse
 } from '@remix-run/react';
 import { getTickets, getTicketsBySearchTerm } from '~/models/tickets.server';
 import AdminNavBar from '~/components/AdminNavBar';
@@ -47,7 +48,7 @@ export default function adminTicketListRoute() {
 	return (
 		<>
 			<header className='container header'>
-				<Link to='/board/admin' className='icon-header'>
+				<Link to='/board/admin/index' className='icon-header'>
 					<FaTools className='icon-size icon-shadow' />
 					Back to Board
 				</Link>
@@ -69,7 +70,7 @@ export default function adminTicketListRoute() {
 					<Form
 						ref={formRef}
 						method='get'
-						action='/board/admin/users/ticketlist'
+						action='/board/admin/users/ticketlist/index'
 						className='search-container form-group'
 					>
 						<label htmlFor='query' className='label-search'>
@@ -88,7 +89,7 @@ export default function adminTicketListRoute() {
 							<FaSearch className='search-icon' />
 						</button>
 					</Form>
-					<Link to='/board/admin/users/ticketlist' className='flex-container'>
+					<Link to='/board/admin/users/ticketlist/index' className='flex-container'>
 						Back to complete ticket list
 					</Link>
 					{tickets.length && typeof tickets !== 'string' ? (
@@ -193,31 +194,30 @@ export default function adminTicketListRoute() {
 	);
 }
 
-export function CatchBoundary() {
-	const caught = useCatch();
-
-	if (caught.status === 401) {
-		return (
-			<div className='error-container'>
-				<div className='form-container form-content'>
-					<p>You must be logged in to create a ticket.</p>
-					<Link to='/login?redirectTo=/tickets/new-ticket'>
-						<button className='btn form-btn'>Login</button>
-					</Link>
+export function ErrorBoundary() {
+	const error = useRouteError();
+	if (isRouteErrorResponse(error)) {
+		if (error.status === 401) {
+			return (
+				<div className='error-container'>
+					<div className='form-container form-content'>
+						<p>You must be logged in to create a ticket.</p>
+						<Link to='/login?redirectTo=/tickets/new-ticket'>
+							<button className='btn form-btn'>Login</button>
+						</Link>
+					</div>
 				</div>
-			</div>
-		);
+			);
+		} else {
+			return (
+				<div className='error-container'>
+					<div className='form-container form-container-message form-content'>
+						Something unexpected went wrong. Sorry about that.
+					</div>
+					<p>Status: {error.status}</p>
+					<p>{error.data.message}</p>
+				</div>
+			);
+		}
 	}
-	throw new Error(`Unexpected caught response with status: ${caught.status}`);
-}
-
-export function ErrorBoundary({ error }: { error: Error; }) {
-	console.error(error);
-	return (
-		<div className='error-container'>
-			<div className='form-container form-container-message form-content'>
-				Something unexpected went wrong. Sorry about that.
-			</div>
-		</div>
-	);
 }

@@ -10,8 +10,9 @@ import {
 	useActionData,
 	Link,
 	useFetcher,
-	useCatch,
-	Outlet
+	Outlet,
+	useRouteError,
+	isRouteErrorResponse
 } from '@remix-run/react';
 
 import { getUser, requireUserId } from '~/utils/session.server';
@@ -21,22 +22,6 @@ import { getStatuses } from '~/models/status.server';
 import { validateTitle, validateDescription } from '~/utils/functions';
 import { getTicket } from '~/models/tickets.server';
 import { getNoteListingByTicketId } from '~/models/notes.server';
-
-export const meta: MetaFunction = ({
-	data
-}: {
-	data: LoaderData | undefined;
-}) => {
-	if (!data) {
-		return {
-			title: 'No ticket'
-		};
-	} else {
-		return {
-			title: 'Support Desk | Tickets'
-		};
-	}
-};
 
 type LoaderData = {
 	user: Awaited<ReturnType<typeof getUser>>;
@@ -82,6 +67,14 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 		};
 
 		return data;
+	}
+};
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	if (!data) {
+		return [{ title: 'No ticket' }];
+	} else {
+		return [{ title: 'Support Desk | Tickets' }];
 	}
 };
 
@@ -199,20 +192,20 @@ export default function userTicketIdRoute() {
 	const fetcher = useFetcher();
 
 	function handleSelectStatus(selectedStatus: string) {
-		return fetcher.submission?.formData.get('status') === selectedStatus;
+		return fetcher.formData?.get('status') === selectedStatus;
 	}
 
 	function handleSelectProduct(selectedProduct: string) {
-		return fetcher.submission?.formData.get('product') === selectedProduct;
+		return fetcher.formData?.get('product') === selectedProduct;
 	}
 
 	const isNewTicket = !ticket;
 	const hasNotes = notesByTicketId && notesByTicketId.length > 1;
 	const isCreating = Boolean(
-		fetcher.submission?.formData.get('intent') === 'create'
+		fetcher.formData?.get('intent') === 'create'
 	);
 	const isUpdating = Boolean(
-		fetcher.submission?.formData.get('intent') === 'update'
+		fetcher.formData?.get('intent') === 'update'
 	);
 
 	return (
@@ -227,7 +220,6 @@ export default function userTicketIdRoute() {
 			</p>
 			<div className='form-scroll'>
 				<fetcher.Form
-					reloadDocument
 					method='post'
 					className='form'
 					key={ticket?.ticketId ?? 'new-ticket'}
@@ -521,31 +513,30 @@ export default function userTicketIdRoute() {
 	);
 }
 
-export function CatchBoundary() {
-	const caught = useCatch();
-
-	if (caught.status === 401) {
-		return (
-			<div className='error-container'>
-				<div className='form-container form-content'>
-					<p>You must be logged in to create a ticket.</p>
-					<Link to='/login?redirectTo=/board/employee/tickets/new-ticket'>
-						<button className='btn form-btn'>Login</button>
-					</Link>
+export function ErrorBoundary() {
+	const error = useRouteError();
+	if (isRouteErrorResponse(error)) {
+		if (error.status === 401) {
+			return (
+				<div className='error-container'>
+					<div className='form-container form-content'>
+						<p>You must be logged in to create a ticket.</p>
+						<Link to='/login?redirectTo=/board/employee/tickets/new-ticket'>
+							<button className='btn form-btn'>Login</button>
+						</Link>
+					</div>
 				</div>
-			</div>
-		);
+			);
+		} else {
+			return (
+				<div className='error-container'>
+					<div className='form-container form-container-message form-content'>
+						Something unexpected went wrong. Sorry about that.
+					</div>
+					<p>Status: {error.status}</p>
+					<p>{error.data.message}</p>
+				</div>
+			);
+		}
 	}
-	throw new Error(`Unexpected caught response with status: ${caught.status}`);
-}
-
-export function ErrorBoundary({ error }: { error: Error; }) {
-	console.error(error);
-	return (
-		<div className='error-container'>
-			<div className='form-container form-container-message form-content'>
-				Something unexpected went wrong. Sorry about that.
-			</div>
-		</div>
-	);
 }

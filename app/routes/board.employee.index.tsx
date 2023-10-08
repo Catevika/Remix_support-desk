@@ -1,17 +1,11 @@
 import type { MetaFunction, LoaderFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { useLoaderData, NavLink } from '@remix-run/react';
+import { useLoaderData, NavLink, useRouteError, isRouteErrorResponse } from '@remix-run/react';
 import { requireUser } from '~/utils/session.server';
 import { getTicketListingByUserId } from '~/models/tickets.server';
 import LogoutButton from '~/components/LogoutButton';
 import { CgProfile } from 'react-icons/cg';
 import { FaTools, FaQuestionCircle, FaTicketAlt } from 'react-icons/fa';
-
-export const meta: MetaFunction = () => {
-  return {
-    title: 'Support-Desk | Employee Board'
-  };
-};
 
 type LoaderData = {
   user: Awaited<ReturnType<typeof requireUser>>;
@@ -21,9 +15,13 @@ type LoaderData = {
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await requireUser(request);
   const tickets = await getTicketListingByUserId(user.id);
-  
+
   return json<LoaderData>({ user, tickets });
-}
+};
+
+export const meta: MetaFunction<typeof loader> = () => {
+  return [{ title: 'Support-Desk | Employee Board' }];
+};
 
 export default function employeeUserBoardRoute() {
   const { user, tickets } = useLoaderData<LoaderData>();
@@ -55,10 +53,10 @@ export default function employeeUserBoardRoute() {
               </NavLink>
             </li>
             <li>
-            <NavLink to={(lastTicket && typeof lastTicket !== 'string') ? (`/board/employee/tickets/${lastTicket.ticketId}`) : ('/board/employee/tickets/new-ticket')} className='btn btn-block nav-links'>
-            <FaTicketAlt className='icon-size icon-space' />
+              <NavLink to={(lastTicket && typeof lastTicket !== 'string') ? (`/board/employee/tickets/${lastTicket.ticketId}`) : ('/board/employee/tickets/new-ticket')} className='btn btn-block nav-links'>
+                <FaTicketAlt className='icon-size icon-space' />
                 &nbsp;View Tickets
-            </NavLink>
+              </NavLink>
             </li>
             <li>
               <NavLink
@@ -76,13 +74,17 @@ export default function employeeUserBoardRoute() {
   );
 }
 
-export function ErrorBoundary({ error }: { error: Error; }) {
-  console.error(error);
-  return (
-    <div className='error-container'>
-			<div className='form-container form-container-message form-content'>
-				Something unexpected went wrong. Sorry about that.
-			</div>
-		</div>
-  );
+export function ErrorBoundary() {
+  const error = useRouteError();
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div className='error-container'>
+        <div className='form-container form-container-message form-content'>
+          Something unexpected went wrong. Sorry about that.
+        </div>
+        <p>Status: {error.status}</p>
+        <p>{error.data.message}</p>
+      </div>
+    );
+  }
 }

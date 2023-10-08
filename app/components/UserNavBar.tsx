@@ -12,7 +12,7 @@ function UserNavBar() {
           </NavLink>
         </li>
         <li>
-          <NavLink to={'/board/employee/tickets'} className={({ isActive }) =>
+          <NavLink to={'/board/employee/users/tickets'} className={({ isActive }) =>
             isActive ? 'active' : undefined
           }>
             User Tickets

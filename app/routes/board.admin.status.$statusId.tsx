@@ -9,30 +9,15 @@ import {
 	Link,
 	useLoaderData,
 	useActionData,
-	useCatch,
-	useNavigation
+	useNavigation,
+	useRouteError,
+	isRouteErrorResponse
 } from '@remix-run/react';
 
 import { requireUserId, getUser } from '~/utils/session.server';
 import { prisma } from '~/utils/db.server';
 import { validateStatus } from '~/utils/functions';
 import { getStatus, deleteStatus } from '~/models/status.server';
-
-export const meta: MetaFunction = ({
-	data
-}: {
-	data: LoaderData | undefined;
-}) => {
-	if (!data) {
-		return {
-			title: 'No Status'
-		};
-	} else {
-		return {
-			title: 'Support Desk | Status'
-		};
-	}
-};
 
 type LoaderData = {
 	user: Awaited<ReturnType<typeof getUser>>;
@@ -63,6 +48,14 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 		};
 
 		return data;
+	}
+};
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	if (!data) {
+		return [{ title: 'No Status' }];
+	} else {
+		return [{ title: 'Support Desk | Status' }];
 	}
 };
 
@@ -263,33 +256,32 @@ export default function adminStatusRoute() {
 	);
 }
 
-export function CatchBoundary() {
-	const caught = useCatch();
-
-	if (caught.status === 401) {
-		return (
-			<div className='error-container'>
-				<div className='form-container form-content'>
-					<p>
-						You must be logged in with administrator rights to create a status.
-					</p>
-					<Link to='/login?redirectTo=/board/admin/status/new-status'>
-						<button className='btn form-btn'>Login</button>
-					</Link>
+export function ErrorBoundary() {
+	const error = useRouteError();
+	if (isRouteErrorResponse(error)) {
+		if (error.status === 401) {
+			return (
+				<div className='error-container'>
+					<div className='form-container form-content'>
+						<p>
+							You must be logged in with administrator rights to create a status.
+						</p>
+						<Link to='/login?redirectTo=/board/admin/status/new-status'>
+							<button className='btn form-btn'>Login</button>
+						</Link>
+					</div>
 				</div>
-			</div>
-		);
+			);
+		} else {
+			return (
+				<div className='error-container'>
+					<div className='form-container form-container-message form-content'>
+						Something unexpected went wrong. Sorry about that.
+					</div>
+					<p>Status: {error.status}</p>
+					<p>{error.data.message}</p>
+				</div>
+			);
+		}
 	}
-	throw new Error(`Unexpected caught response with status: ${caught.status}`);
-}
-
-export function ErrorBoundary({ error }: { error: Error; }) {
-	console.error(error);
-	return (
-		<div className='error-container'>
-			<div className='form-container form-container-message form-content'>
-				Something unexpected went wrong. Sorry about that.
-			</div>
-		</div>
-	);
 }

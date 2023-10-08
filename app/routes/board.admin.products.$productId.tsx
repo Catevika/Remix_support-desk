@@ -9,70 +9,62 @@ import {
 	Link,
 	useLoaderData,
 	useActionData,
-	useCatch,
-	useNavigation
+	useNavigation,
+	useRouteError,
+	isRouteErrorResponse
 } from '@remix-run/react';
 
 import { requireUserId, getUser } from '~/utils/session.server';
 import { prisma } from '~/utils/db.server';
-import { validateServiceName } from '~/utils/functions';
-import { getService, deleteService } from '~/models/services.server';
-
-export const meta: MetaFunction = ({
-	data
-}: {
-	data: LoaderData | undefined;
-}) => {
-	if (!data) {
-		return {
-			title: 'No service'
-		};
-	} else {
-		return {
-			title: 'Support Desk | Services'
-		};
-	}
-};
+import { validateProduct } from '~/utils/functions';
+import { getProduct, deleteProduct } from '~/models/products.server';
 
 type LoaderData = {
 	user: Awaited<ReturnType<typeof getUser>>;
-	service: Awaited<ReturnType<typeof getService>>;
+	product: Awaited<ReturnType<typeof getProduct>>;
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
 	const user = await getUser(request);
+
 	if (!user || user.service !== 'Information Technology') {
 		throw new Response('Unauthorized', { status: 401 });
 	}
 
-	if (params.serviceId === 'new-service') {
-		const user = await getUser(request);
-
+	if (params.productId === 'new-product') {
 		const data: LoaderData = {
 			user,
-			service: null
+			product: null
 		};
 
 		return data;
 	} else {
-		const service = await getService(params.serviceId);
+		const product = await getProduct(params.productId);
 
 		const data: LoaderData = {
 			user,
-			service
+			product
 		};
 
 		return data;
+	}
+};
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	if (!data) {
+		return [{ title: 'No product' }];
+	} else {
+		return [{ title: 'Support Desk | Products' }];
 	}
 };
 
 type ActionData = {
 	formError?: string;
 	fieldErrors?: {
-		name: string | undefined;
+		device: string | undefined;
 	};
 	fields?: {
-		name: string;
+		device: string;
 	};
 };
 
@@ -82,63 +74,64 @@ export const action: ActionFunction = async ({ request, params }) => {
 	const userId = await requireUserId(request);
 
 	const form = await request.formData();
-	const name = form.get('name');
+	const device = form.get('device');
 
-	if (typeof name !== 'string') {
+	if (typeof device !== 'string') {
 		return badRequest({
-			formError: `Service must be an at least 2 characters long string`
+			formError: `Product must be an at least 3 characters long string`
 		});
 	}
 
 	const intent = form.get('intent');
 
 	if (intent === 'delete') {
-		await deleteService(params.serviceId);
-		return redirect('/board/admin/services/new-service');
+		await deleteProduct(params.productId);
+		return redirect('/board/admin/products/new-product');
 	}
 
 	const fieldErrors = {
-		name: validateServiceName(name)
+		device: validateProduct(device)
 	};
 
-	const fields = { name };
+	const fields = { device };
 	if (Object.values(fieldErrors).some(Boolean)) {
 		return badRequest({ fieldErrors, fields });
 	}
 
-	const serviceExists = await prisma.service.findUnique({
-		where: { name }
+	const productExists = await prisma.product.findUnique({
+		where: { device }
 	});
 
-	if (serviceExists) {
+	if (productExists) {
 		return badRequest({
 			fields,
-			formError: `Service '${name}' already exists`
+			formError: `Product '${device}' already exists`
 		});
 	}
 
-	if (params.serviceId === 'new-service') {
-		await prisma.service.create({
-			data: { name, authorId: userId }
+	if (params.productId === 'new-product') {
+		await prisma.product.create({
+			data: { device, authorId: userId }
 		});
 	} else {
-		await prisma.service.update({
-			data: { name },
-			where: { serviceId: params.serviceId }
+		await prisma.product.update({
+			data: { device },
+			where: { productId: params.productId }
 		});
 	}
 
-	return redirect('/board/admin/services/new-service');
+	return redirect('/board/admin/products/new-product');
 };
 
-export default function adminServiceRoute() {
+export default function adminProductRoute() {
 	const data = useLoaderData<LoaderData>();
+
 	const user = data.user;
 
 	const actionData = useActionData() as ActionData;
 	const navigation = useNavigation();
 
-	const isNewService = !data.service?.name;
+	const isNewProduct = !data.product?.device;
 	const isAdding = Boolean(
 		navigation.formData?.get('intent') === 'create'
 	);
@@ -155,39 +148,41 @@ export default function adminServiceRoute() {
 				<Form
 					reloadDocument
 					method='post'
-					key={data.service?.serviceId ?? 'new-service'}
+					key={data.product?.productId ?? 'new-product'}
 				>
 					<p>
-						{isNewService ? 'New' : null}&nbsp;Service from:
+						{isNewProduct ? 'New' : null}&nbsp;Product from:
 						<span className='capitalize'>&nbsp;{user?.username}&nbsp;</span> -
 						Email:<span>&nbsp;{user?.email}</span>
 					</p>
 					<div className='form-content'>
 						<div className='form-group'>
-							<label htmlFor='name'>
-								{isNewService ? 'New' : null}&nbsp;Service:{' '}
+							<label htmlFor='device'>
+								{isNewProduct ? 'New' : null}&nbsp;Product:{' '}
 								<input
 									type='text'
-									defaultValue={data.service?.name}
-									name='name'
+									defaultValue={data.product?.device}
+									name='device'
 									aria-errormessage={
-										actionData?.fieldErrors?.name ? 'service-error' : undefined
+										actionData?.fieldErrors?.device
+											? 'product-error'
+											: undefined
 									}
 								/>
 							</label>
-							{actionData?.fieldErrors?.name ? (
-								<p className='error-danger' role='alert' id='service-error'>
-									{actionData.fieldErrors.name}
+							{actionData?.fieldErrors?.device ? (
+								<p className='error-danger' role='alert' id='product-error'>
+									{actionData.fieldErrors.device}
 								</p>
 							) : null}
 						</div>
-						<div id='form-error-message'>
+						<div>
 							{actionData?.formError ? (
 								<p className='error-danger' role='alert'>
 									{actionData.formError}
 								</p>
 							) : null}
-							{data.service ? (
+							{data.product ? (
 								<div className='form-group inline'>
 									<label>
 										Created at:&nbsp;
@@ -196,7 +191,7 @@ export default function adminServiceRoute() {
 											id='createdAt'
 											name='createdAt'
 											defaultValue={new Date(
-												data.service.createdAt
+												data.product.createdAt
 											).toLocaleString('en-us', {
 												month: '2-digit',
 												day: '2-digit',
@@ -214,7 +209,7 @@ export default function adminServiceRoute() {
 											id='updatedAt'
 											name='updatedAt'
 											defaultValue={new Date(
-												data.service.updatedAt
+												data.product.updatedAt
 											).toLocaleString('en-us', {
 												month: '2-digit',
 												day: '2-digit',
@@ -232,19 +227,19 @@ export default function adminServiceRoute() {
 							<button
 								type='submit'
 								name='intent'
-								value={isNewService ? 'create' : 'update'}
+								value={isNewProduct ? 'create' : 'update'}
 								className='btn form-btn'
 								disabled={isAdding || isUpdating}
 							>
-								{isNewService ? (isAdding ? 'Adding...' : 'Add') : null}
-								{isNewService ? null : isUpdating ? 'Updating...' : 'Update'}
+								{isNewProduct ? (isAdding ? 'Adding...' : 'Add') : null}
+								{isNewProduct ? null : isUpdating ? 'Updating...' : 'Update'}
 							</button>
-							{isNewService ? null : (
-								<Link to='/board/admin/services/new-service'>
-									<button className='btn form-btn'>Back to New Service</button>
+							{isNewProduct ? null : (
+								<Link to='/board/admin/products/new-product'>
+									<button className='btn form-btn'>Back to New Product</button>
 								</Link>
 							)}
-							{isNewService ? null : (
+							{isNewProduct ? null : (
 								<button
 									type='submit'
 									name='intent'
@@ -263,34 +258,33 @@ export default function adminServiceRoute() {
 	);
 }
 
-export function CatchBoundary() {
-	const caught = useCatch();
-
-	if (caught.status === 401) {
-		return (
-			<div className='error-container'>
-				<div className='form-container form-content'>
-					<p>
-						You must be logged in with administrator rights to add a new
-						service.
-					</p>
-					<Link to='/login?redirectTo=/board/admin/services/new-service'>
-						<button className='btn form-btn'>Login</button>
-					</Link>
+export function ErrorBoundary() {
+	const error = useRouteError();
+	if (isRouteErrorResponse(error)) {
+		if (error.status === 401) {
+			return (
+				<div className='error-container'>
+					<div className='form-container form-content'>
+						<p>
+							You must be logged in with administrator rights to add a new
+							product.
+						</p>
+						<Link to='/login?redirectTo=/board/admin/products/new-product'>
+							<button className='btn form-btn'>Login</button>
+						</Link>
+					</div>
 				</div>
-			</div>
-		);
+			);
+		} else {
+			return (
+				<div className='error-container'>
+					<div className='form-container form-container-message form-content'>
+						Something unexpected went wrong. Sorry about that.
+					</div>
+					<p>Status: {error.status}</p>
+					<p>{error.data.message}</p>
+				</div>
+			);
+		}
 	}
-	throw new Error(`Unexpected caught response with status: ${caught.status}`);
-}
-
-export function ErrorBoundary({ error }: { error: Error; }) {
-	console.error(error);
-	return (
-		<div className='error-container'>
-			<div className='form-container form-container-message form-content'>
-				Something unexpected went wrong. Sorry about that.
-			</div>
-		</div>
-	);
 }

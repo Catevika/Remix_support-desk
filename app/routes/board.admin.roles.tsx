@@ -1,6 +1,6 @@
-import type { LoaderFunction } from '@remix-run/node';
+import type { LoaderFunction, MetaFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { Outlet, useLoaderData, Link, NavLink } from '@remix-run/react';
+import { Outlet, useLoaderData, Link, NavLink, useRouteError, isRouteErrorResponse } from '@remix-run/react';
 import { getRoles } from '~/models/roles.server';
 import AdminNavBar from '~/components/AdminNavBar';
 import LogoutButton from '~/components/LogoutButton';
@@ -17,12 +17,17 @@ export const loader: LoaderFunction = async () => {
 	return json<LoaderData>({ roles });
 };
 
+export const meta: MetaFunction<typeof loader> = () => {
+	return [{ title: 'Support-Desk | Roles' }];
+};
+
+
 export default function adminRoleRoute() {
 	const { roles } = useLoaderData<LoaderData>();
 	return (
 		<>
 			<header className='container header'>
-				<Link to='/board/admin' className='icon-header'>
+				<Link to='/board/admin/index' className='icon-header'>
 					<FaTools className='icon-size icon-shadow' />
 					Back to Board
 				</Link>
@@ -75,13 +80,17 @@ export default function adminRoleRoute() {
 	);
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
-	console.error(error);
-	return (
-		<div className='error-container'>
-			<div className='form-container form-container-message form-content'>
-				Something unexpected went wrong. Sorry about that.
+export function ErrorBoundary() {
+	const error = useRouteError();
+	if (isRouteErrorResponse(error)) {
+		return (
+			<div className='error-container'>
+				<div className='form-container form-container-message form-content'>
+					Something unexpected went wrong. Sorry about that.
+				</div>
+				<p>Status: {error.status}</p>
+				<p>{error.data.message}</p>
 			</div>
-		</div>
-	);
+		);
+	}
 }

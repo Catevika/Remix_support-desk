@@ -5,7 +5,9 @@ import {
 	useSearchParams,
 	Form,
 	useNavigation,
-	Link
+	Link,
+	useRouteError,
+	isRouteErrorResponse
 } from '@remix-run/react';
 
 import {
@@ -19,9 +21,7 @@ import { FaTools } from 'react-icons/fa';
 import { getUserByEmail } from '~/models/users.server';
 
 export const meta: MetaFunction = () => {
-	return {
-		title: 'Support-Desk | Login'
-	};
+	return [{ title: 'Support-Desk | Login' }];
 };
 
 type ActionData = {
@@ -58,10 +58,10 @@ export const action: ActionFunction = async ({ request }) => {
 	isAdmin && isAdmin.service === process.env.ADMIN_ROLE
 		? redirectTo
 			? safeRedirect(redirectTo)
-			: (redirectTo = safeRedirect('/board/admin'))
+			: (redirectTo = safeRedirect('/board/admin/index'))
 		: redirectTo
 			? safeRedirect(redirectTo)
-			: (redirectTo = safeRedirect('/board/employee'));
+			: (redirectTo = safeRedirect('/board/employee/index'));
 
 	const fields = { email, password };
 	const fieldErrors = {
@@ -168,13 +168,17 @@ export default function Login() {
 	);
 }
 
-export function ErrorBoundary({ error }: { error: Error; }) {
-	console.error(error);
-	return (
-		<div className='error-container'>
-			<div className='form-container form-container-message form-content'>
-				Something unexpected went wrong. Sorry about that.
+export function ErrorBoundary() {
+	const error = useRouteError();
+	if (isRouteErrorResponse(error)) {
+		return (
+			<div className='error-container'>
+				<div className='form-container form-container-message form-content'>
+					Something unexpected went wrong. Sorry about that.
+				</div>
+				<p>Status: {error.status}</p>
+				<p>{error.data.message}</p>
 			</div>
-		</div>
-	);
+		);
+	}
 }

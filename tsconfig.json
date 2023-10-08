@@ -1,7 +1,7 @@
 {
-  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": [ "remix.env.d.ts", "**/*.ts", "**/*.tsx", "server.js", "app/routes/board/employee/tickets/$ticketId/.deleteTicket.tsx" ],
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ES2019"],
+    "lib": [ "DOM", "DOM.Iterable", "ES2019" ],
     "isolatedModules": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
@@ -13,10 +13,8 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./app/*"]
+      "~/*": [ "./app/*" ]
     },
-
-    // Remix takes care of building everything in `remix build`.
     "noEmit": true
   }
 }

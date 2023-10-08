@@ -18,8 +18,8 @@
 }
 
 .label {
-	color: var;
-	(-light)padding: 20px 0;
+	color: var(--light);
+	padding: 20px 0;
 }
 
 .actions {

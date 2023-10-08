@@ -33,7 +33,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 	if (intent === 'delete') {
 		await deleteAllNotes(params.ticketId);
 		await deleteTicket(params.ticketId);
-		return redirect(`/board/admin/users/ticketlist`);
+		return redirect(`/board/admin/users/ticketlist/index`);
 	}
 };
 

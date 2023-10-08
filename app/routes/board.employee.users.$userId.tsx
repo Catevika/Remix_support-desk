@@ -6,13 +6,15 @@ import {
 } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import {
+	Form,
 	Link,
 	useLoaderData,
-	useCatch,
 	useParams,
 	useActionData,
 	useSearchParams,
-	useFetcher
+	useFetcher,
+	useRouteError,
+	isRouteErrorResponse
 } from '@remix-run/react';
 import {
 	createUserSession,
@@ -30,21 +32,6 @@ import {
 	validateUsername
 } from '~/utils/functions';
 import LogoutButton from '~/components/LogoutButton';
-
-export const meta: MetaFunction = ({
-	data
-}: {
-	data: LoaderData | undefined;
-}) => {
-	if (!data) {
-		return {
-			title: 'No user'
-		};
-	}
-	return {
-		title: 'Support Desk | User'
-	};
-};
 
 type LoaderData = {
 	user: Awaited<ReturnType<typeof getUserById>>;
@@ -71,6 +58,14 @@ export const loader: LoaderFunction = async ({ params }) => {
 	const services = await getServices();
 
 	return json<LoaderData>({ user, services });
+};
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	if (!data) {
+		return [{ title: 'No user' }];
+	} else {
+		return [{ title: 'Support Desk | User' }];
+	}
 };
 
 type ActionData = {
@@ -104,10 +99,10 @@ export const action: ActionFunction = async ({ request, params }) => {
 	const service = form.get('service');
 
 	let redirectTo = safeRedirect(
-		form.get('redirectTo') || `/board/admin/users/userlist`
+		form.get('redirectTo') || `/board/employee/users/${user?.id}`
 	);
 
-	if (!user || (!username && !email && !password && !service)) {
+	if (!username && !email && !password && !service) {
 		return null;
 	}
 
@@ -158,7 +153,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 	}
 };
 
-export default function adminUserIdRoute() {
+export default function employeeUserIdRoute() {
 	const { user, services } = useLoaderData<LoaderData>();
 	const actionData = useActionData() as ActionData;
 	const [searchParams] = useSearchParams();
@@ -172,33 +167,26 @@ export default function adminUserIdRoute() {
 	}
 
 	const isUpdating = Boolean(
-		fetcher.submission?.formData.get('intent') === 'update'
+		fetcher.formData?.get('intent') === 'update'
 	);
 	const isDeleting = Boolean(
-		fetcher.submission?.formData.get('intent') === 'delete'
+		fetcher.formData?.get('intent') === 'delete'
 	);
-
-	const subject = 'URGENT - Password Reset';
-
-	const body =
-		'Your password has been reset to 123456 following modifications of your user profile data. Please customize it as soon as possible.   Your support desk technician.';
 
 	return (
 		<>
 			<header className='container header'>
-				<Link to='/board/admin/users/userlist' className='icon-header'>
-					<FaTools className='icon-size icon-shadow' /> Users
+				<Link to='/board/employee/index' className='icon-header'>
+					<FaTools className='icon-size icon-shadow' />
+					Back to Board
 				</Link>
-				<div className='header-flex'>
-					<p>User Profile</p>
-					<LogoutButton />
-				</div>
+				<p>User Profile</p>
+				<LogoutButton />
 			</header>
 			{user ? (
 				<main className='form-container-center'>
 					<div className='form-content'>
 						<fetcher.Form
-							reloadDocument
 							method='post'
 							className='form'
 							key={user?.id}
@@ -328,8 +316,8 @@ export default function adminUserIdRoute() {
 								>
 									{isUpdating ? 'Updating...' : 'Update'}
 								</button>
-								<Link to='/board/admin/users/userlist'>
-									<button className='btn'>Back to User List</button>
+								<Link to='/board/employee/index'>
+									<button className='btn'>Back to Board</button>
 								</Link>
 								<button
 									type='submit'
@@ -342,23 +330,6 @@ export default function adminUserIdRoute() {
 								</button>
 							</div>
 						</fetcher.Form>
-						<div className='form-group'>
-							<ul className='danger'>
-								<li>If you update these user profile data:</li>
-								<li>
-									change the password to <span>123456</span> and
-								</li>
-								<li>
-									send this{' '}
-									<a
-										href={`mailto:${user.email}?subject=${subject}&body=${body}`}
-									>
-										<span>email</span>
-									</a>{' '}
-									to the user.
-								</li>
-							</ul>
-						</div>
 					</div>
 				</main>
 			) : null}
@@ -366,64 +337,68 @@ export default function adminUserIdRoute() {
 	);
 }
 
-export function CatchBoundary() {
-	const caught = useCatch();
+export function ErrorBoundary() {
 	const { userId } = useParams();
-	switch (caught.status) {
-		case 403: {
-			return (
-				<div className='error-container' style={{ fontSize: '1.5rem' }}>
-					<div className='form-container form-container-message form-content'>
-						<p>This action is not supported</p>
-						<Link to={`/board/admin/users/userlist/${userId}`}>
-							<button className='btn form-btn'>Back to Profile</button>
-						</Link>
+	const error = useRouteError();
+	if (isRouteErrorResponse(error)) {
+		switch (error.status) {
+			case 403: {
+				return (
+					<div className='error-container' style={{ fontSize: '1.5rem' }}>
+						<div className='form-container form-container-message form-content'>
+							<p>This action is not supported</p>
+							<Link to={`/board/employee/users/${userId}`}>
+								<button className='btn form-btn'>Back to Profile</button>
+							</Link>
+						</div>
 					</div>
-				</div>
-			);
-		}
+				);
+			}
 
-		case 404: {
-			return (
-				<div className='error-container'>
-					<div className='form-container form-content'>
-						{userId} does not exist.
+			case 404: {
+				return (
+					<div className='error-container'>
+						<div className='form-container form-content'>
+							{userId} does not exist.
+						</div>
 					</div>
-				</div>
-			);
-		}
-		default: {
-			throw new Error(`Unhandled error: ${caught.status}`);
+				);
+			}
+			default: {
+				return (
+					<div className='error-container' style={{ fontSize: '1.5rem' }}>
+						<div className='form-container form-container-message form-content'>
+							<p>
+								To{' '}
+								<span className='error-danger error-danger-big'>
+									delete your Account:
+								</span>
+							</p>
+							<p>first delete your tickets and their associated notes,</p>
+							<p>then come back to your user profile</p>
+							<p>and click the delete button.</p>
+							<p>OR</p>
+							<p>
+								send a{' '}
+								<Link to={`/board/employee/users/${userId}`}>
+									<span>Ticket</span>
+								</Link>{' '}
+								to the Support Desk.
+							</p>
+							<p>
+								<span className='error-danger error-danger-big'>
+									These actions are permanent.
+								</span>
+							</p>
+							<Link to={`/board/employee/users/${userId}`}>
+								<button className='btn form-btn'>Back to Profile</button>
+							</Link>
+						</div>
+						<p>Status: {error.status}</p>
+						<p>{error.data.message}</p>
+					</div>
+				);
+			}
 		}
 	}
-}
-
-export function ErrorBoundary({ error }: { error: Error; }) {
-	const { userId } = useParams();
-	console.log(error);
-	return (
-		<div className='error-container' style={{ fontSize: '1.5rem' }}>
-			<div className='form-container form-container-message form-content'>
-				<p>
-					To{' '}
-					<span className='error-danger error-danger-big'>
-						delete an Account:
-					</span>
-				</p>
-				<p>first delete its tickets and their associated notes,</p>
-				<p>then come back to the user profile</p>
-				<p>and click the delete button.</p>
-				<p>OR</p>
-				<p>delete the user via the database.</p>
-				<p>
-					<span className='error-danger error-danger-big'>
-						These actions are permanent.
-					</span>
-				</p>
-				<Link to='/board/admin/users/userlist'>
-					<button className='btn form-btn'>Back to User List</button>
-				</Link>
-			</div>
-		</div>
-	);
 }

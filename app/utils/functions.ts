@@ -111,11 +111,11 @@ export function validateText(text: unknown) {
  */
 export function useMatchesData(
   id: string
-): Record<string, unknown> | undefined {
+): Record<string, undefined> | unknown {
   const matchingRoutes = useMatches();
   const route = useMemo(
     () => matchingRoutes.find((route) => route.id === id),
     [matchingRoutes, id]
   );
-  return route?.data;
+  if (route) return route?.data;
 }

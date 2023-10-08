@@ -10,7 +10,7 @@ function AdminNavBar() {
 			<ul id='menu' className='admin-nav-links'>
 				<li>
 					<NavLink
-						to={'/board/admin/users/userlist'}
+						to={'/board/admin/users/userlist/index'}
 						className={({ isActive }) => (isActive ? 'active' : undefined)}
 					>
 						Users
@@ -18,7 +18,7 @@ function AdminNavBar() {
 				</li>
 				<li>
 					<NavLink
-						to={'/board/admin/users/ticketlist'}
+						to={'/board/admin/users/ticketlist/index'}
 						className={({ isActive }) => (isActive ? 'active' : undefined)}
 					>
 						Tickets
@@ -26,7 +26,7 @@ function AdminNavBar() {
 				</li>
 				<li>
 					<NavLink
-						to={'/board/admin/users/notelist'}
+						to={'/board/admin/users/notelist/index'}
 						className={({ isActive }) => (isActive ? 'active' : undefined)}
 					>
 						Notes
