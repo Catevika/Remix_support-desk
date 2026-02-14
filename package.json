@@ -16,7 +16,7 @@
     "@reach/alert-dialog": "^0.18.0",
     "@reach/dialog": "^0.18.0",
     "@remix-run/node": "^2.17.3",
-    "@remix-run/react": "^2.17.3",
+    "@remix-run/react": "^2.17.4",
     "bcryptjs": "^2.4.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
