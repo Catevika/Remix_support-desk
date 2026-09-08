@@ -1,22 +1,27 @@
 import type { MetaFunction, LoaderFunction } from '@remix-run/node';
-import { json } from '@remix-run/node';
-import { useLoaderData, NavLink, useRouteError, isRouteErrorResponse } from '@remix-run/react';
-import { requireUser } from '~/utils/session.server';
-import { getTicketListingByUserId } from '~/models/tickets.server';
-import LogoutButton from '~/components/LogoutButton';
-import { CgProfile } from 'react-icons/cg';
-import { FaTools, FaQuestionCircle, FaTicketAlt } from 'react-icons/fa';
+import { data } from "@remix-run/node";
+import {
+	useLoaderData,
+	NavLink,
+	useRouteError,
+	isRouteErrorResponse,
+} from "@remix-run/react";
+import { requireUser } from "~/utils/session.server";
+import { getTicketListingByUserId } from "~/models/tickets.server";
+import LogoutButton from "~/components/LogoutButton";
+import { CgProfile } from "react-icons/cg";
+import { FaTools, FaQuestionCircle, FaTicketAlt } from "react-icons/fa";
 
 type LoaderData = {
-  user: Awaited<ReturnType<typeof requireUser>>;
-  tickets: Awaited<ReturnType<typeof getTicketListingByUserId>>;
+	user: Awaited<ReturnType<typeof requireUser>>;
+	tickets: Awaited<ReturnType<typeof getTicketListingByUserId>>;
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const user = await requireUser(request);
-  const tickets = await getTicketListingByUserId(user.id);
+	const user = await requireUser(request);
+	const tickets = await getTicketListingByUserId(user.id);
 
-  return json<LoaderData>({ user, tickets });
+	return data<LoaderData>({ user, tickets });
 };
 
 export const meta: MetaFunction<typeof loader> = () => {

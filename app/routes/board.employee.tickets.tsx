@@ -1,11 +1,17 @@
 import type { LoaderFunction } from '@remix-run/node';
-import { json } from '@remix-run/node';
-import { Outlet, useLoaderData, Link, useRouteError, isRouteErrorResponse } from '@remix-run/react';
-import { getUserId } from '~/utils/session.server';
-import { getTicketListingByUserId } from '~/models/tickets.server';
-import LogoutButton from '~/components/LogoutButton';
-import { MdMiscellaneousServices } from 'react-icons/md';
-import { FaTools } from 'react-icons/fa';
+import { data } from "@remix-run/node";
+import {
+	Outlet,
+	useLoaderData,
+	Link,
+	useRouteError,
+	isRouteErrorResponse,
+} from "@remix-run/react";
+import { getUserId } from "~/utils/session.server";
+import { getTicketListingByUserId } from "~/models/tickets.server";
+import LogoutButton from "~/components/LogoutButton";
+import { MdMiscellaneousServices } from "react-icons/md";
+import { FaTools } from "react-icons/fa";
 
 type LoaderData = {
 	ticketsByUserId: Awaited<ReturnType<typeof getTicketListingByUserId>>;
@@ -15,7 +21,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 	const userId = await getUserId(request);
 	const ticketsByUserId = await getTicketListingByUserId(userId);
 
-	return json<LoaderData>({ ticketsByUserId });
+	return data<LoaderData>({ ticketsByUserId });
 };
 
 export default function employeeTicketRoute() {

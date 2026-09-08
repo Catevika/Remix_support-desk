@@ -3,7 +3,7 @@ import type {
 	LoaderFunction,
 	ActionFunction
 } from '@remix-run/node';
-import { json, redirect } from '@remix-run/node';
+import { redirect } from "@remix-run/node";
 import {
 	Form,
 	Link,
@@ -11,13 +11,13 @@ import {
 	useActionData,
 	useNavigation,
 	useRouteError,
-	isRouteErrorResponse
-} from '@remix-run/react';
+	isRouteErrorResponse,
+} from "@remix-run/react";
 
-import { requireUserId, getUser } from '~/utils/session.server';
-import { prisma } from '~/utils/db.server';
-import { validateStatus } from '~/utils/functions';
-import { getStatus, deleteStatus } from '~/models/status.server';
+import { requireUserId, getUser } from "~/utils/session.server";
+import { prisma } from "~/utils/db.server";
+import { validateStatus } from "~/utils/functions";
+import { getStatus, deleteStatus } from "~/models/status.server";
 
 type LoaderData = {
 	user: Awaited<ReturnType<typeof getUser>>;
@@ -26,16 +26,16 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async ({ request, params }) => {
 	const user = await getUser(request);
-	if (!user || user.service !== 'Information Technology') {
-		throw new Response('Unauthorized', { status: 401 });
+	if (!user || user.service !== "Information Technology") {
+		throw new Response("Unauthorized", { status: 401 });
 	}
 
-	if (params.statusId === 'new-status') {
+	if (params.statusId === "new-status") {
 		const user = await getUser(request);
 
 		const data: LoaderData = {
 			user,
-			status: null
+			status: null,
 		};
 
 		return data;
@@ -44,7 +44,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 		const data: LoaderData = {
 			user,
-			status
+			status,
 		};
 
 		return data;
@@ -53,9 +53,9 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	if (!data) {
-		return [{ title: 'No Status' }];
+		return [{ title: "No Status" }];
 	} else {
-		return [{ title: 'Support Desk | Status' }];
+		return [{ title: "Support Desk | Status" }];
 	}
 };
 
@@ -69,7 +69,7 @@ type ActionData = {
 	};
 };
 
-const badRequest = (data: ActionData) => json(data, { status: 400 });
+const badRequest = (data: ActionData) => Response.json(data, { status: 400 });
 
 export const action: ActionFunction = async ({ request, params }) => {
 	const userId = await requireUserId(request);

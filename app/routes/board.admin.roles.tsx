@@ -1,11 +1,18 @@
 import type { LoaderFunction, MetaFunction } from '@remix-run/node';
-import { json } from '@remix-run/node';
-import { Outlet, useLoaderData, Link, NavLink, useRouteError, isRouteErrorResponse } from '@remix-run/react';
-import { getRoles } from '~/models/roles.server';
-import AdminNavBar from '~/components/AdminNavBar';
-import LogoutButton from '~/components/LogoutButton';
-import { MdMiscellaneousServices } from 'react-icons/md';
-import { FaTools } from 'react-icons/fa';
+import { data } from "@remix-run/node";
+import {
+	Outlet,
+	useLoaderData,
+	Link,
+	NavLink,
+	useRouteError,
+	isRouteErrorResponse,
+} from "@remix-run/react";
+import { getRoles } from "~/models/roles.server";
+import AdminNavBar from "~/components/AdminNavBar";
+import LogoutButton from "~/components/LogoutButton";
+import { MdMiscellaneousServices } from "react-icons/md";
+import { FaTools } from "react-icons/fa";
 
 type LoaderData = {
 	roles: Awaited<ReturnType<typeof getRoles>>;
@@ -14,7 +21,7 @@ type LoaderData = {
 export const loader: LoaderFunction = async () => {
 	const roles = await getRoles();
 
-	return json<LoaderData>({ roles });
+	return data<LoaderData>({ roles });
 };
 
 export const meta: MetaFunction<typeof loader> = () => {

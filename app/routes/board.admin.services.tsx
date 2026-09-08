@@ -1,12 +1,19 @@
-import type { LoaderFunction, MetaFunction } from '@remix-run/node';
-import { json } from '@remix-run/node';
-import { useLoaderData, Link, NavLink, Outlet, useRouteError, isRouteErrorResponse } from '@remix-run/react';
-import { getServices } from '~/models/services.server';
-import AdminNavBar from '~/components/AdminNavBar';
-import LogoutButton from '~/components/LogoutButton';
-import { MdAutoAwesome } from 'react-icons/md';
-import { FaTools } from 'react-icons/fa';
-import { IconContext } from 'react-icons/lib';
+import { getServices } from "~/models/services.server";
+import AdminNavBar from "~/components/AdminNavBar";
+import LogoutButton from "~/components/LogoutButton";
+import { MdAutoAwesome } from "react-icons/md";
+import { FaTools } from "react-icons/fa";
+import { IconContext } from "react-icons/lib";
+import {
+	data,
+	isRouteErrorResponse,
+	Link,
+	NavLink,
+	Outlet,
+	useLoaderData,
+	useRouteError,
+} from "@remix-run/react";
+import { LoaderFunction, MetaFunction } from "@remix-run/node";
 
 type LoaderData = {
 	services: Awaited<ReturnType<typeof getServices>>;
@@ -14,47 +21,46 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async () => {
 	const services = await getServices();
-	return json<LoaderData>({ services });
+	return data<LoaderData>({ services });
 };
 
 export const meta: MetaFunction<typeof loader> = () => {
-	return [{ title: 'Support-Desk | Services' }];
+	return [{ title: "Support-Desk | Services" }];
 };
-
 
 export default function adminServiceRoute() {
 	const { services } = useLoaderData<LoaderData>();
 	return (
 		<>
-			<header className='container header'>
-				<Link to='/board/admin/index' className='icon-header'>
-					<FaTools className='icon-size icon-shadow' />
+			<header className="container header">
+				<Link to="/board/admin/index" className="icon-header">
+					<FaTools className="icon-size icon-shadow" />
 					Back to Board
 				</Link>
 				<AdminNavBar />
-				<div className='header-flex'>
+				<div className="header-flex">
 					<h1>Services</h1>
 					<LogoutButton />
 				</div>
 			</header>
-			<main className='flex-container-2-col'>
+			<main className="flex-container-2-col">
 				{services.length ? (
 					<div>
-						<p className='inline-left'>
-							<IconContext.Provider value={{ color: '#a9a5c0' }}>
-								<MdAutoAwesome className='icon-size icon-container' />
+						<p className="inline-left">
+							<IconContext.Provider value={{ color: "#a9a5c0" }}>
+								<MdAutoAwesome className="icon-size icon-container" />
 							</IconContext.Provider>
 							<span>{services.length}</span>&nbsp;services
 						</p>
-						<nav className='nav-ul-container'>
-							<ul className='nav-ul'>
+						<nav className="nav-ul-container">
+							<ul className="nav-ul">
 								{services.map((service) => (
-									<li key={service.serviceId} className='inline-between'>
+									<li key={service.serviceId} className="inline-between">
 										<NavLink
 											to={service.serviceId}
-											prefetch='intent'
+											prefetch="intent"
 											className={({ isActive }) =>
-												isActive ? 'active inline-between' : undefined
+												isActive ? "active inline-between" : undefined
 											}
 										>
 											<span>{service.name}</span>
@@ -62,7 +68,7 @@ export default function adminServiceRoute() {
 										&nbsp;
 										<Link
 											to={`/board/admin/services/${service.serviceId}`}
-											className='view'
+											className="view"
 										>
 											View
 										</Link>
@@ -72,7 +78,7 @@ export default function adminServiceRoute() {
 						</nav>
 					</div>
 				) : (
-					<p className='form-container form-content'>
+					<p className="form-container form-content">
 						No service available yet
 					</p>
 				)}
@@ -86,8 +92,8 @@ export function ErrorBoundary() {
 	const error = useRouteError();
 	if (isRouteErrorResponse(error)) {
 		return (
-			<div className='error-container'>
-				<div className='form-container form-container-message form-content'>
+			<div className="error-container">
+				<div className="form-container form-container-message form-content">
 					Something unexpected went wrong. Sorry about that.
 				</div>
 				<p>Status: {error.status}</p>

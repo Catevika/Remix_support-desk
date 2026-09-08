@@ -4,7 +4,7 @@ import type {
 	LinksFunction,
 	LoaderFunction,
 } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { Form, useActionData, useNavigate, useParams } from "@remix-run/react";
 import { prisma } from "~/utils/db.server";
 import { validateText } from "~/utils/functions";
@@ -44,7 +44,7 @@ type ActionData = {
 	};
 };
 
-const badRequest = (data: ActionData) => json(data, { status: 400 });
+const badRequest = (data: ActionData) => Response.json(data, { status: 400 });
 
 export const action: ActionFunction = async ({ request, params }) => {
 	const user = await getUser(request);

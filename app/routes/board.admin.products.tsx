@@ -1,11 +1,11 @@
 import type { LoaderFunction, MetaFunction } from '@remix-run/node';
-import { json } from '@remix-run/node';
-import { useLoaderData, Link, NavLink, Outlet } from '@remix-run/react';
-import { getProducts } from '~/models/products.server';
-import AdminNavBar from '~/components/AdminNavBar';
-import LogoutButton from '~/components/LogoutButton';
-import { MdOutlineDevicesOther } from 'react-icons/md';
-import { FaTools } from 'react-icons/fa';
+import { data } from "@remix-run/node";
+import { useLoaderData, Link, NavLink, Outlet } from "@remix-run/react";
+import { getProducts } from "~/models/products.server";
+import AdminNavBar from "~/components/AdminNavBar";
+import LogoutButton from "~/components/LogoutButton";
+import { MdOutlineDevicesOther } from "react-icons/md";
+import { FaTools } from "react-icons/fa";
 
 type LoaderData = {
 	products: Awaited<ReturnType<typeof getProducts>>;
@@ -13,7 +13,7 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async () => {
 	const products = await getProducts();
-	return json<LoaderData>({ products });
+	return data<LoaderData>({ products });
 };
 
 export const meta: MetaFunction<typeof loader> = () => {

@@ -1,5 +1,5 @@
 import type { LoaderFunction, MetaFunction } from '@remix-run/node';
-import { json } from '@remix-run/node';
+import { data } from '@remix-run/node';
 import { Outlet, useLoaderData, Link, NavLink, useRouteError, isRouteErrorResponse } from '@remix-run/react';
 import { getStatuses } from '~/models/status.server';
 import AdminNavBar from '~/components/AdminNavBar';
@@ -13,7 +13,7 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async () => {
 	const statuses = await getStatuses();
-	return json<LoaderData>({ statuses });
+	return data<LoaderData>({ statuses });
 };
 
 export const meta: MetaFunction<typeof loader> = () => {

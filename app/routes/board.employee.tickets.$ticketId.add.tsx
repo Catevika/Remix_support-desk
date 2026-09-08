@@ -1,9 +1,9 @@
 import type { ActionFunction, LinksFunction } from '@remix-run/node';
-import { json, redirect } from '@remix-run/node';
-import { Form, useActionData, useNavigate, useParams } from '@remix-run/react';
-import { prisma } from '~/utils/db.server';
-import { validateText } from '~/utils/functions';
-import { requireUserId } from '~/utils/session.server';
+import { redirect } from "@remix-run/node";
+import { Form, useActionData, useNavigate, useParams } from "@remix-run/react";
+import { prisma } from "~/utils/db.server";
+import { validateText } from "~/utils/functions";
+import { requireUserId } from "~/utils/session.server";
 import { Dialog } from "~/components/Dialog";
 import stylesUrl from "~/styles/dialog.css";
 
@@ -26,7 +26,7 @@ type ActionData = {
 	};
 };
 
-const badRequest = (data: ActionData) => json(data, { status: 400 });
+const badRequest = (data: ActionData) => Response.json(data, { status: 400 });
 
 export const action: ActionFunction = async ({ request, params }) => {
 	const userId = await requireUserId(request);

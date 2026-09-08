@@ -4,7 +4,7 @@ import type {
 	ActionFunction,
 	LinksFunction,
 } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import {
 	Form,
 	useLoaderData,
@@ -62,7 +62,7 @@ type ActionData = {
 	};
 };
 
-const badRequest = (data: ActionData) => json(data, { status: 400 });
+const badRequest = (data: ActionData) => Response.json(data, { status: 400 });
 
 export const action: ActionFunction = async ({ request, params }) => {
 	const form = await request.formData();

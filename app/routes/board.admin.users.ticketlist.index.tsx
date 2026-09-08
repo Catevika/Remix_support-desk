@@ -1,5 +1,5 @@
 import type { LoaderFunction } from '@remix-run/node';
-import { json } from '@remix-run/node';
+import { data } from "@remix-run/node";
 import {
 	Outlet,
 	useLoaderData,
@@ -8,14 +8,14 @@ import {
 	useSearchParams,
 	useLocation,
 	useRouteError,
-	isRouteErrorResponse
-} from '@remix-run/react';
-import { getTickets, getTicketsBySearchTerm } from '~/models/tickets.server';
-import AdminNavBar from '~/components/AdminNavBar';
-import LogoutButton from '~/components/LogoutButton';
-import { MdMiscellaneousServices } from 'react-icons/md';
-import { FaSearch, FaTools } from 'react-icons/fa';
-import { useEffect, useRef } from 'react';
+	isRouteErrorResponse,
+} from "@remix-run/react";
+import { getTickets, getTicketsBySearchTerm } from "~/models/tickets.server";
+import AdminNavBar from "~/components/AdminNavBar";
+import LogoutButton from "~/components/LogoutButton";
+import { MdMiscellaneousServices } from "react-icons/md";
+import { FaSearch, FaTools } from "react-icons/fa";
+import { useEffect, useRef } from "react";
 
 type LoaderData = {
 	tickets: Awaited<ReturnType<typeof getTickets>>;
@@ -24,11 +24,11 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async ({ request }) => {
 	const url = new URL(request.url);
-	const query = url.searchParams.get('query'.toLowerCase());
+	const query = url.searchParams.get("query".toLowerCase());
 	const tickets = query
 		? await getTicketsBySearchTerm(query)
 		: await getTickets();
-	return json({ tickets });
+	return data({ tickets });
 };
 
 export default function adminTicketListRoute() {

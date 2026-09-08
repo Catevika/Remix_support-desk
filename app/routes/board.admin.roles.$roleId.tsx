@@ -3,7 +3,7 @@ import type {
 	LoaderFunction,
 	ActionFunction
 } from '@remix-run/node';
-import { json, redirect } from '@remix-run/node';
+import { redirect } from "@remix-run/node";
 import {
 	Form,
 	Link,
@@ -11,13 +11,13 @@ import {
 	useActionData,
 	useNavigation,
 	useRouteError,
-	isRouteErrorResponse
-} from '@remix-run/react';
+	isRouteErrorResponse,
+} from "@remix-run/react";
 
-import { requireUserId, getUser } from '~/utils/session.server';
-import { prisma } from '~/utils/db.server';
-import { validateRole } from '~/utils/functions';
-import { deleteRole, getRole } from '~/models/roles.server';
+import { requireUserId, getUser } from "~/utils/session.server";
+import { prisma } from "~/utils/db.server";
+import { validateRole } from "~/utils/functions";
+import { deleteRole, getRole } from "~/models/roles.server";
 
 type LoaderData = {
 	user: Awaited<ReturnType<typeof getUser>>;
@@ -27,14 +27,14 @@ type LoaderData = {
 export const loader: LoaderFunction = async ({ request, params }) => {
 	const user = await getUser(request);
 
-	if (!user || user.service !== 'Information Technology') {
-		throw new Response('Unauthorized', { status: 401 });
+	if (!user || user.service !== "Information Technology") {
+		throw new Response("Unauthorized", { status: 401 });
 	}
 
-	if (params.roleId === 'new-role') {
+	if (params.roleId === "new-role") {
 		const data: LoaderData = {
 			user,
-			role: null
+			role: null,
 		};
 
 		return data;
@@ -43,7 +43,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 		const data: LoaderData = {
 			user,
-			role
+			role,
 		};
 
 		return data;
@@ -52,9 +52,9 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	if (!data) {
-		return [{ title: 'No role' }];
+		return [{ title: "No role" }];
 	} else {
-		return [{ title: 'Support Desk | Roles' }];
+		return [{ title: "Support Desk | Roles" }];
 	}
 };
 
@@ -68,7 +68,7 @@ type ActionData = {
 	};
 };
 
-const badRequest = (data: ActionData) => json(data, { status: 400 });
+const badRequest = (data: ActionData) => Response.json(data, { status: 400 });
 
 export const action: ActionFunction = async ({ request, params }) => {
 	const userId = await requireUserId(request);

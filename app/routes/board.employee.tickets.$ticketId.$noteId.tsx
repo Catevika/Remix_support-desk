@@ -3,17 +3,17 @@ import type {
 	ActionFunction,
 	LinksFunction
 } from '@remix-run/node';
-import { json, redirect } from '@remix-run/node';
+import { redirect } from "@remix-run/node";
 import {
 	Form,
 	useLoaderData,
 	useActionData,
 	useNavigate,
-	useNavigation
-} from '@remix-run/react';
-import { validateText } from '~/utils/functions';
-import { deleteNote, getNoteByNoteId } from '~/models/notes.server';
-import { prisma } from '~/utils/db.server';
+	useNavigation,
+} from "@remix-run/react";
+import { validateText } from "~/utils/functions";
+import { deleteNote, getNoteByNoteId } from "~/models/notes.server";
+import { prisma } from "~/utils/db.server";
 import { Dialog } from "~/components/Dialog";
 
 import stylesUrl from "~/styles/dialog.css";
@@ -33,20 +33,20 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async ({ params }) => {
 	if (!params.noteId) {
-		throw new Response('Note Not Found.', {
-			status: 404
+		throw new Response("Note Not Found.", {
+			status: 404,
 		});
 	}
 
 	const note = await getNoteByNoteId(params.noteId);
 	if (!note) {
-		throw new Response('Note Not Found.', {
-			status: 404
+		throw new Response("Note Not Found.", {
+			status: 404,
 		});
 	}
 
 	const data: LoaderData = {
-		note
+		note,
 	};
 
 	return data;
@@ -62,7 +62,7 @@ type ActionData = {
 	};
 };
 
-const badRequest = (data: ActionData) => json(data, { status: 400 });
+const badRequest = (data: ActionData) => Response.json(data, { status: 400 });
 
 export const action: ActionFunction = async ({ request, params }) => {
 	const form = await request.formData();

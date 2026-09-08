@@ -3,7 +3,7 @@ import type {
 	LoaderFunction,
 	ActionFunction
 } from '@remix-run/node';
-import { json, redirect } from '@remix-run/node';
+import { redirect } from "@remix-run/node";
 import {
 	useLoaderData,
 	useActionData,
@@ -12,18 +12,18 @@ import {
 	Outlet,
 	useParams,
 	useRouteError,
-	isRouteErrorResponse
-} from '@remix-run/react';
+	isRouteErrorResponse,
+} from "@remix-run/react";
 
-import { getUser } from '~/utils/session.server';
-import { prisma } from '~/utils/db.server';
-import { getProducts } from '~/models/products.server';
-import { getStatuses } from '~/models/status.server';
-import { validateTitle, validateDescription } from '~/utils/functions';
-import { getTicket, deleteTicket } from '~/models/tickets.server';
-import { getNoteListingByTicketId } from '~/models/notes.server';
-import { FaTools } from 'react-icons/fa';
-import LogoutButton from '~/components/LogoutButton';
+import { getUser } from "~/utils/session.server";
+import { prisma } from "~/utils/db.server";
+import { getProducts } from "~/models/products.server";
+import { getStatuses } from "~/models/status.server";
+import { validateTitle, validateDescription } from "~/utils/functions";
+import { getTicket, deleteTicket } from "~/models/tickets.server";
+import { getNoteListingByTicketId } from "~/models/notes.server";
+import { FaTools } from "react-icons/fa";
+import LogoutButton from "~/components/LogoutButton";
 
 type LoaderData = {
 	user: Awaited<ReturnType<typeof getUser>>;
@@ -40,7 +40,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 			getStatuses(),
 			getProducts(),
 			getTicket(params.ticketId),
-			getNoteListingByTicketId(params.ticketId)
+			getNoteListingByTicketId(params.ticketId),
 		]
 	);
 
@@ -49,7 +49,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 		products,
 		statuses,
 		ticket,
-		notesByTicketId
+		notesByTicketId,
 	};
 
 	return data;
@@ -57,11 +57,13 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	if (!data) {
-		return [{ title: 'No ticket' }];
+		return [{ title: "No ticket" }];
 	} else {
-		return [{
-			title: 'Support Desk | Tickets'
-		}];
+		return [
+			{
+				title: "Support Desk | Tickets",
+			},
+		];
 	}
 };
 
@@ -79,7 +81,7 @@ type ActionData = {
 	};
 };
 
-const badRequest = (data: ActionData) => json(data, { status: 400 });
+const badRequest = (data: ActionData) => Response.json(data, { status: 400 });
 
 export const action: ActionFunction = async ({ request, params }) => {
 	const form = await request.formData();

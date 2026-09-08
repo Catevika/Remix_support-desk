@@ -1,9 +1,9 @@
 import type {
 	MetaFunction,
 	LoaderFunction,
-	ActionFunction
-} from '@remix-run/node';
-import { json } from '@remix-run/node';
+	ActionFunction,
+} from "@remix-run/node";
+import { data } from "@remix-run/node";
 import {
 	Link,
 	useLoaderData,
@@ -11,21 +11,21 @@ import {
 	useSearchParams,
 	useFetcher,
 	useRouteError,
-	isRouteErrorResponse
-} from '@remix-run/react';
+	isRouteErrorResponse,
+} from "@remix-run/react";
 
 import {
 	safeRedirect,
 	validateUsername,
 	validateEmail,
 	validatePassword,
-	validateService
-} from '~/utils/functions';
-import { createUserSession, register } from '~/utils/session.server';
-import { FaTools } from 'react-icons/fa';
-import { getUserByEmail } from '~/models/users.server';
-import { getServices } from '~/models/services.server';
-import { prisma } from '~/utils/db.server';
+	validateService,
+} from "~/utils/functions";
+import { createUserSession, register } from "~/utils/session.server";
+import { FaTools } from "react-icons/fa";
+import { getUserByEmail } from "~/models/users.server";
+import { getServices } from "~/models/services.server";
+import { prisma } from "~/utils/db.server";
 
 type LoaderData = {
 	services: Awaited<ReturnType<typeof getServices>>;
@@ -33,11 +33,11 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async () => {
 	const services = await getServices();
-	return json<LoaderData>({ services });
+	return data<LoaderData>({ services });
 };
 
 export const meta: MetaFunction<typeof loader> = () => {
-	return [{ title: 'Support-Desk | Register' }];
+	return [{ title: "Support-Desk | Register" }];
 };
 
 type ActionData = {
@@ -56,7 +56,7 @@ type ActionData = {
 	};
 };
 
-const badRequest = (data: ActionData) => json(data, { status: 400 });
+const badRequest = (data: ActionData) => Response.json(data, { status: 400 });
 
 export const action: ActionFunction = async ({ request }) => {
 	const form = await request.formData();

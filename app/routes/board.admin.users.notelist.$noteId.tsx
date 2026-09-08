@@ -5,9 +5,10 @@ import type {
 	LinksFunction,
 	MetaFunction,
 } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import {
 	Form,
+	Link,
 	useLoaderData,
 	useActionData,
 	useNavigate,
@@ -71,7 +72,7 @@ type ActionData = {
 	};
 };
 
-const badRequest = (data: ActionData) => json(data, { status: 400 });
+const badRequest = (data: ActionData) => Response.json(data, { status: 400 });
 
 export const action: ActionFunction = async ({ request, params }) => {
 	const form = await request.formData();
@@ -175,9 +176,13 @@ export default function userNoteViewRoute() {
 					>
 						{isUpdating ? "Updating..." : "Update"}
 					</button>
-					<button type="button" className="btn form-btn" onClick={onDismiss}>
+					<Link
+						to="/board/admin/users/notelist/index"
+						replace
+						className="btn form-btn"
+					>
 						Back to Notes
-					</button>
+					</Link>
 					<button
 						type="submit"
 						name="intent"

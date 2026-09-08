@@ -1,19 +1,19 @@
 import type { LoaderFunction } from '@remix-run/node';
-import { json } from '@remix-run/node';
+import { data } from "@remix-run/node";
 import {
 	Form,
 	Link,
 	useLoaderData,
 	useLocation,
-	useSearchParams
-} from '@remix-run/react';
-import { FaSearch, FaTools } from 'react-icons/fa';
-import AdminNavBar from '~/components/AdminNavBar';
-import LogoutButton from '~/components/LogoutButton';
-import { RiUserSearchLine } from 'react-icons/ri';
+	useSearchParams,
+} from "@remix-run/react";
+import { FaSearch, FaTools } from "react-icons/fa";
+import AdminNavBar from "~/components/AdminNavBar";
+import LogoutButton from "~/components/LogoutButton";
+import { RiUserSearchLine } from "react-icons/ri";
 
-import { getUsers, getUsersBySearchTerm } from '~/models/users.server';
-import { useEffect, useRef } from 'react';
+import { getUsers, getUsersBySearchTerm } from "~/models/users.server";
+import { useEffect, useRef } from "react";
 
 type LoaderData = {
 	users: Awaited<ReturnType<typeof getUsers>>;
@@ -22,9 +22,9 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async ({ request }) => {
 	const url = new URL(request.url);
-	const query = url.searchParams.get('query'.toLowerCase());
+	const query = url.searchParams.get("query".toLowerCase());
 	const users = query ? await getUsersBySearchTerm(query) : await getUsers();
-	return json({ users });
+	return data({ users });
 };
 
 export default function adminUserListRoute() {
