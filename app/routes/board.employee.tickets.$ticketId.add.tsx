@@ -4,21 +4,15 @@ import { Form, useActionData, useNavigate, useParams } from '@remix-run/react';
 import { prisma } from '~/utils/db.server';
 import { validateText } from '~/utils/functions';
 import { requireUserId } from '~/utils/session.server';
-import { Dialog } from '@reach/dialog';
-
-import styles from '@reach/dialog/styles.css';
-import stylesUrl from '~/styles/dialog.css';
+import { Dialog } from "~/components/Dialog";
+import stylesUrl from "~/styles/dialog.css";
 
 export let links: LinksFunction = () => {
 	return [
 		{
-			rel: 'stylesheet',
-			href: styles
+			rel: "stylesheet",
+			href: stylesUrl,
 		},
-		{
-			rel: 'stylesheet',
-			href: stylesUrl
-		}
 	];
 };
 

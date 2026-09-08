@@ -1,11 +1,17 @@
-[data-reach-dialog-overlay] {
+.dialog-overlay {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	z-index: 5;
+	background: rgb(0 0 0 / 45%);
 }
 
-[data-reach-dialog-content] {
+.dialog-overlay > .dialog {
 	width: 90vw;
 }
 

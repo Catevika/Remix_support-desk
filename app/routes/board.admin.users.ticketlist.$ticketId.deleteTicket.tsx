@@ -5,24 +5,19 @@ import { useRef } from 'react';
 import {
 	AlertDialog,
 	AlertDialogDescription,
-	AlertDialogLabel
-} from '@reach/alert-dialog';
-import { deleteTicket } from '~/models/tickets.server';
+	AlertDialogLabel,
+} from "~/components/Dialog";
+import { deleteTicket } from "~/models/tickets.server";
 
-import styles from '@reach/dialog/styles.css';
-import stylesUrl from '~/styles/dialog.css';
-import { deleteAllNotes } from '~/models/notes.server';
+import stylesUrl from "~/styles/dialog.css";
+import { deleteAllNotes } from "~/models/notes.server";
 
 export let links: LinksFunction = () => {
 	return [
 		{
-			rel: 'stylesheet',
-			href: styles
+			rel: "stylesheet",
+			href: stylesUrl,
 		},
-		{
-			rel: 'stylesheet',
-			href: stylesUrl
-		}
 	];
 };
 

@@ -1,34 +1,29 @@
-import { Dialog } from '@reach/dialog';
+import { Dialog } from "~/components/Dialog";
 import type {
 	LoaderFunction,
 	ActionFunction,
-	LinksFunction
-} from '@remix-run/node';
-import { json, redirect } from '@remix-run/node';
+	LinksFunction,
+} from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import {
 	Form,
 	useLoaderData,
 	useActionData,
 	useNavigate,
-	useNavigation
-} from '@remix-run/react';
-import styles from '@reach/dialog/styles.css';
+	useNavigation,
+} from "@remix-run/react";
 
-import stylesUrl from '~/styles/dialog.css';
-import { validateText } from '~/utils/functions';
-import { deleteNote, getNoteByNoteId } from '~/models/notes.server';
-import { prisma } from '~/utils/db.server';
+import stylesUrl from "~/styles/dialog.css";
+import { validateText } from "~/utils/functions";
+import { deleteNote, getNoteByNoteId } from "~/models/notes.server";
+import { prisma } from "~/utils/db.server";
 
 export let links: LinksFunction = () => {
 	return [
 		{
-			rel: 'stylesheet',
-			href: styles
+			rel: "stylesheet",
+			href: stylesUrl,
 		},
-		{
-			rel: 'stylesheet',
-			href: stylesUrl
-		}
 	];
 };
 
@@ -38,20 +33,20 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async ({ params }) => {
 	if (!params.noteId) {
-		throw new Response('Note Not Found.', {
-			status: 404
+		throw new Response("Note Not Found.", {
+			status: 404,
 		});
 	}
 
 	const note = await getNoteByNoteId(params.noteId);
 	if (!note) {
-		throw new Response('Note Not Found.', {
-			status: 404
+		throw new Response("Note Not Found.", {
+			status: 404,
 		});
 	}
 
 	const data: LoaderData = {
-		note
+		note,
 	};
 
 	return data;
@@ -71,19 +66,19 @@ const badRequest = (data: ActionData) => json(data, { status: 400 });
 
 export const action: ActionFunction = async ({ request, params }) => {
 	const form = await request.formData();
-	const text = form.get('text');
-	const intent = form.get('intent');
+	const text = form.get("text");
+	const intent = form.get("intent");
 
 	const noteId = params.noteId;
 
-	if (typeof text !== 'string' || !text) {
+	if (typeof text !== "string" || !text) {
 		return badRequest({
-			formError: 'Invalid form data'
+			formError: "Invalid form data",
 		});
 	}
 
 	const fieldErrors = {
-		text: validateText(text)
+		text: validateText(text),
 	};
 
 	const fields = { text };
@@ -94,19 +89,19 @@ export const action: ActionFunction = async ({ request, params }) => {
 	const note = await prisma.note.findUnique({ where: { noteId } });
 
 	if (!note) {
-		throw new Response('Note Not Found.', {
-			status: 404
+		throw new Response("Note Not Found.", {
+			status: 404,
 		});
 	}
 
-	if (intent === 'update') {
+	if (intent === "update") {
 		await prisma.note.update({
 			data: {
 				noteUserId: note.noteUserId,
 				noteTicketId: note.noteTicketId,
-				text
+				text,
 			},
-			where: { noteId: params.noteId }
+			where: { noteId: params.noteId },
 		});
 		return redirect(`/board/admin/users/ticketlist/${note?.noteTicketId}`);
 	} else {
@@ -121,12 +116,8 @@ export default function userNoteViewRoute() {
 	const actionData = useActionData() as ActionData;
 	const navigation = useNavigation();
 
-	const isUpdating = Boolean(
-		navigation.formData?.get('intent') === 'update'
-	);
-	const isDeleting = Boolean(
-		navigation.formData?.get('intent') === 'delete'
-	);
+	const isUpdating = Boolean(navigation.formData?.get("intent") === "update");
+	const isDeleting = Boolean(navigation.formData?.get("intent") === "delete");
 
 	function onDismiss() {
 		navigate(`/board/admin/users/ticketlist/${note?.noteTicketId}`);
@@ -134,58 +125,58 @@ export default function userNoteViewRoute() {
 
 	return (
 		<Dialog
-			className='dialog'
+			className="dialog"
 			isOpen={true}
-			aria-label='Manage note'
+			aria-label="Manage note"
 			onDismiss={onDismiss}
 		>
 			<p>Note:</p>
 			<Form
-				className='form'
-				method='post'
+				className="form"
+				method="post"
 				reloadDocument
 				key={note?.noteTicketId ?? null}
 			>
-				<div className='form-group'>
-					<label className='label' htmlFor='text'>
+				<div className="form-group">
+					<label className="label" htmlFor="text">
 						Text:
 						<textarea
-							id='text'
-							name='text'
+							id="text"
+							name="text"
 							defaultValue={note?.text}
 							aria-errormessage={
-								actionData?.fieldErrors?.text ? 'text-error' : undefined
+								actionData?.fieldErrors?.text ? "text-error" : undefined
 							}
-							className='form-textarea'
+							className="form-textarea"
 						/>
 					</label>
 					{actionData?.fieldErrors?.text ? (
-						<p className='error-danger' role='alert' id='name-error'>
+						<p className="error-danger" role="alert" id="name-error">
 							{actionData.fieldErrors.text}
 						</p>
 					) : null}
 				</div>
-				<div className='inline actions'>
+				<div className="inline actions">
 					<button
-						type='submit'
-						name='intent'
-						value='update'
-						className='btn form-btn'
+						type="submit"
+						name="intent"
+						value="update"
+						className="btn form-btn"
 						disabled={isUpdating}
 					>
-						{isUpdating ? 'Updating...' : 'Update'}
+						{isUpdating ? "Updating..." : "Update"}
 					</button>
-					<button type='button' className='btn form-btn' onClick={onDismiss}>
+					<button type="button" className="btn form-btn" onClick={onDismiss}>
 						Back to Notes
 					</button>
 					<button
-						type='submit'
-						name='intent'
-						value='delete'
-						className='btn form-btn btn-danger'
+						type="submit"
+						name="intent"
+						value="delete"
+						className="btn form-btn btn-danger"
 						disabled={isDeleting}
 					>
-						{isDeleting ? 'isDeleting...' : 'Delete'}
+						{isDeleting ? "isDeleting..." : "Delete"}
 					</button>
 				</div>
 			</Form>

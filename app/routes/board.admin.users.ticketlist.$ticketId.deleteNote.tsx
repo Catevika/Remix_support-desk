@@ -5,22 +5,17 @@ import { deleteAllNotes } from '~/models/notes.server';
 import {
 	AlertDialog,
 	AlertDialogDescription,
-	AlertDialogLabel
-} from '@reach/alert-dialog';
+	AlertDialogLabel,
+} from "~/components/Dialog";
 
-import styles from '@reach/dialog/styles.css';
-import stylesUrl from '~/styles/dialog.css';
+import stylesUrl from "~/styles/dialog.css";
 
 export let links: LinksFunction = () => {
 	return [
 		{
-			rel: 'stylesheet',
-			href: styles
+			rel: "stylesheet",
+			href: stylesUrl,
 		},
-		{
-			rel: 'stylesheet',
-			href: stylesUrl
-		}
 	];
 };
 

@@ -14,21 +14,16 @@ import {
 import { validateText } from '~/utils/functions';
 import { deleteNote, getNoteByNoteId } from '~/models/notes.server';
 import { prisma } from '~/utils/db.server';
-import { Dialog } from '@reach/dialog';
+import { Dialog } from "~/components/Dialog";
 
-import styles from '@reach/dialog/styles.css';
-import stylesUrl from '~/styles/dialog.css';
+import stylesUrl from "~/styles/dialog.css";
 
 export let links: LinksFunction = () => {
 	return [
 		{
-			rel: 'stylesheet',
-			href: styles
+			rel: "stylesheet",
+			href: stylesUrl,
 		},
-		{
-			rel: 'stylesheet',
-			href: stylesUrl
-		}
 	];
 };
 
