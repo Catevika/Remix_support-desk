@@ -35,6 +35,11 @@
 		"typescript": "^5.2.2"
 	},
 	"engines": {
-		"node": ">=24"
+		"node": "24.x"
+	},
+	"allowScripts": {
+		"@prisma/client@5.4.1": true,
+		"@prisma/engines@5.4.1": true,
+		"prisma@5.4.1": true
 	}
 }
